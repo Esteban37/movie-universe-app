@@ -23,7 +23,10 @@ class LoggingInterceptor extends Interceptor {
     final method = err.requestOptions.method;
     final url = err.requestOptions.uri.toString();
     final statusCode = err.response?.statusCode;
-    print('[HTTP] <-- $method $url ($statusCode) ERROR: ${err.message}');
+    print(
+      '[HTTP] <-- $method $url ($statusCode) '
+      'ERROR: ${err.message ?? err.type} (${err.error})',
+    );
     handler.next(err);
   }
 }
