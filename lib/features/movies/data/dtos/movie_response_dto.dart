@@ -12,5 +12,6 @@ sealed class MovieResponseDTO with _$MovieResponseDTO {
     @JsonKey(name: 'results') required List<MovieDTO> results,
   }) = _MovieResponseDTO;
 
-  factory MovieResponseDTO.fromJson(Map<String, dynamic> json) => _$MovieResponseDTOFromJson(json);
+  factory MovieResponseDTO.fromJson(Map<String, dynamic> json) =>
+      _$MovieResponseDTOFromJson(json);
 }

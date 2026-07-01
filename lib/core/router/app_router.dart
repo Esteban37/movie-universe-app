@@ -19,10 +19,12 @@ class AppRouter {
 
     FluroRouter.appRouter.define(
       '/movie/:id',
-      handler: Handler(handlerFunc: (_, parameters) {
-        final id = parameters['id']?.first ?? '';
-        return MovieDetailScreen(movieId: id);
-      }),
+      handler: Handler(
+        handlerFunc: (_, parameters) {
+          final id = parameters['id']?.first ?? '';
+          return MovieDetailScreen(movieId: id);
+        },
+      ),
     );
 
     FluroRouter.appRouter.define(

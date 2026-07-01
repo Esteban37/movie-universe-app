@@ -30,7 +30,10 @@ void main() {
     test('maps 5xx response to ServerFailure', () {
       final exception = DioException(
         requestOptions: RequestOptions(path: '/test'),
-        response: Response(requestOptions: RequestOptions(path: '/test'), statusCode: 500),
+        response: Response(
+          requestOptions: RequestOptions(path: '/test'),
+          statusCode: 500,
+        ),
         type: DioExceptionType.badResponse,
       );
 
@@ -43,7 +46,10 @@ void main() {
     test('maps 4xx response to UnexpectedFailure', () {
       final exception = DioException(
         requestOptions: RequestOptions(path: '/test'),
-        response: Response(requestOptions: RequestOptions(path: '/test'), statusCode: 404),
+        response: Response(
+          requestOptions: RequestOptions(path: '/test'),
+          statusCode: 404,
+        ),
         type: DioExceptionType.badResponse,
       );
 

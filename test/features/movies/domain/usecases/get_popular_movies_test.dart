@@ -18,7 +18,7 @@ void main() {
   test('calls repository.getPopular with provided page', () async {
     when(() => mockRepository.getPopular(page: 1)).thenAnswer(
       (_) async => [
-        MovieEntity(
+        const MovieEntity(
           id: 1,
           title: 'Test',
           posterPath: '/poster.jpg',

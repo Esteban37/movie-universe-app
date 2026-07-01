@@ -39,9 +39,8 @@ void main() {
 }
 
 class _TestAdapter implements HttpClientAdapter {
-  final dynamic Function(RequestOptions) onRequest;
-
   _TestAdapter({required this.onRequest});
+  final dynamic Function(RequestOptions) onRequest;
 
   @override
   Future<ResponseBody> fetch(

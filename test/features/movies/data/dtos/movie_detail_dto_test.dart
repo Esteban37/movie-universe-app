@@ -40,7 +40,8 @@ void main() {
     });
 
     test('handles null backdropPath', () {
-      final jsonNoBackdrop = Map<String, dynamic>.from(json)..remove('backdrop_path');
+      final jsonNoBackdrop = Map<String, dynamic>.from(json)
+        ..remove('backdrop_path');
       final dto = MovieDetailDTO.fromJson(jsonNoBackdrop);
       expect(dto.backdropPath, isNull);
     });

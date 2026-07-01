@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movie_universe_app/core/network/dio_client.dart';
 

@@ -43,7 +43,10 @@ void main() {
         attemptCount++;
         throw DioException(
           requestOptions: RequestOptions(path: '/test'),
-          response: Response(requestOptions: RequestOptions(path: '/test'), statusCode: 404),
+          response: Response(
+            requestOptions: RequestOptions(path: '/test'),
+            statusCode: 404,
+          ),
           type: DioExceptionType.badResponse,
         );
       },
@@ -79,9 +82,8 @@ void main() {
 }
 
 class _TestAdapter implements HttpClientAdapter {
-  final dynamic Function(RequestOptions) onRequest;
-
   _TestAdapter({required this.onRequest});
+  final dynamic Function(RequestOptions) onRequest;
 
   @override
   Future<ResponseBody> fetch(

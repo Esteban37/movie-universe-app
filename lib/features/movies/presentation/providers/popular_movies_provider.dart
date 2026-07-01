@@ -43,5 +43,5 @@ class PopularMoviesNotifier extends AsyncNotifier<List<MovieEntity>> {
 
 final popularMoviesProvider =
     AsyncNotifierProvider<PopularMoviesNotifier, List<MovieEntity>>(
-  PopularMoviesNotifier.new,
-);
+      PopularMoviesNotifier.new,
+    );

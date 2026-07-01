@@ -24,7 +24,7 @@ void main() {
   group('getPopular', () {
     test('maps MovieResponseDTO to list of MovieEntity', () async {
       when(() => mockDataSource.getPopular(page: 1)).thenAnswer(
-        (_) async => MovieResponseDTO(
+        (_) async => const MovieResponseDTO(
           page: 1,
           totalPages: 1,
           results: [
@@ -60,17 +60,14 @@ void main() {
         ),
       );
 
-      expect(
-        () => repository.getPopular(),
-        throwsA(isA<Failure>()),
-      );
+      expect(() => repository.getPopular(), throwsA(isA<Failure>()));
     });
   });
 
   group('getTopRated', () {
     test('maps MovieResponseDTO to list of MovieEntity', () async {
       when(() => mockDataSource.getTopRated(page: 1)).thenAnswer(
-        (_) async => MovieResponseDTO(
+        (_) async => const MovieResponseDTO(
           page: 1,
           totalPages: 1,
           results: [
@@ -100,17 +97,14 @@ void main() {
         ),
       );
 
-      expect(
-        () => repository.getTopRated(),
-        throwsA(isA<Failure>()),
-      );
+      expect(() => repository.getTopRated(), throwsA(isA<Failure>()));
     });
   });
 
   group('getMovieDetails', () {
     test('maps MovieDetailDTO to MovieDetailEntity', () async {
       when(() => mockDataSource.getMovieDetails(1)).thenAnswer(
-        (_) async => MovieDetailDTO(
+        (_) async => const MovieDetailDTO(
           id: 1,
           title: 'Detail Movie',
           posterPath: '/poster.jpg',
@@ -142,10 +136,7 @@ void main() {
         ),
       );
 
-      expect(
-        () => repository.getMovieDetails(1),
-        throwsA(isA<Failure>()),
-      );
+      expect(() => repository.getMovieDetails(1), throwsA(isA<Failure>()));
     });
   });
 }

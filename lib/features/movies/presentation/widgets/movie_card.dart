@@ -3,11 +3,7 @@ import 'package:flutter/material.dart';
 import '../../domain/entities/movie_entity.dart';
 
 class MovieCard extends StatelessWidget {
-  const MovieCard({
-    super.key,
-    required this.movie,
-    required this.onTap,
-  });
+  const MovieCard({super.key, required this.movie, required this.onTap});
 
   final MovieEntity movie;
   final VoidCallback onTap;
@@ -25,9 +21,8 @@ class MovieCard extends StatelessWidget {
               child: Image.network(
                 'https://image.tmdb.org/t/p/w500${movie.posterPath}',
                 fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => const Center(
-                  child: Icon(Icons.movie, size: 48),
-                ),
+                errorBuilder: (_, _, _) =>
+                    const Center(child: Icon(Icons.movie, size: 48)),
               ),
             ),
             Padding(

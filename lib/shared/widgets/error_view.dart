@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ErrorView extends StatelessWidget {
-  const ErrorView({
-    super.key,
-    required this.message,
-    required this.onRetry,
-  });
+  const ErrorView({super.key, required this.message, required this.onRetry});
 
   final String message;
   final VoidCallback onRetry;
@@ -30,10 +26,7 @@ class ErrorView extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 24),
-            FilledButton(
-              onPressed: onRetry,
-              child: const Text('Retry'),
-            ),
+            FilledButton(onPressed: onRetry, child: const Text('Retry')),
           ],
         ),
       ),

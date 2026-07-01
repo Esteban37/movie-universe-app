@@ -18,11 +18,8 @@ void main() {
 
   test('calls repository.searchMovies with provided query and page', () async {
     when(() => mockRepository.searchMovies('test', page: 1)).thenAnswer(
-      (_) async => const SearchResultEntity(
-        page: 1,
-        results: [],
-        totalPages: 1,
-      ),
+      (_) async =>
+          const SearchResultEntity(page: 1, results: [], totalPages: 1),
     );
 
     final result = await useCase('test', page: 1);
@@ -33,7 +30,7 @@ void main() {
 
   test('uses default page 1 when page is omitted', () async {
     when(() => mockRepository.searchMovies('test', page: 1)).thenAnswer(
-      (_) async => SearchResultEntity(
+      (_) async => const SearchResultEntity(
         page: 1,
         results: [
           MovieEntity(

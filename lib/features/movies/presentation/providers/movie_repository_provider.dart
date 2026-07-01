@@ -6,7 +6,5 @@ import '../../domain/repositories/movie_repository.dart';
 import '../../../../core/network/dio_provider.dart';
 
 final movieRepositoryProvider = Provider<MovieRepository>((ref) {
-  return MovieRepositoryImpl(
-    MovieRemoteDataSource(ref.watch(dioProvider)),
-  );
+  return MovieRepositoryImpl(MovieRemoteDataSource(ref.watch(dioProvider)));
 });

@@ -17,7 +17,7 @@ void main() {
 
   test('calls repository.getMovieDetails with provided id', () async {
     when(() => mockRepository.getMovieDetails(1)).thenAnswer(
-      (_) async => MovieDetailEntity(
+      (_) async => const MovieDetailEntity(
         id: 1,
         title: 'Detail Movie',
         posterPath: '/poster.jpg',

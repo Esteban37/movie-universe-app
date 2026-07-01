@@ -47,7 +47,10 @@ void main() {
       },
     );
 
-    await dio.get('/test', options: Options(headers: {'Authorization': 'Bearer existing-token'}));
+    await dio.get(
+      '/test',
+      options: Options(headers: {'Authorization': 'Bearer existing-token'}),
+    );
 
     expect(capturedOptions, isNotNull);
     expect(
@@ -58,9 +61,8 @@ void main() {
 }
 
 class _TestAdapter implements HttpClientAdapter {
-  final ResponseBody Function(RequestOptions) onRequest;
-
   _TestAdapter({required this.onRequest});
+  final ResponseBody Function(RequestOptions) onRequest;
 
   @override
   Future<ResponseBody> fetch(

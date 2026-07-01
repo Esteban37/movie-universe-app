@@ -38,9 +38,9 @@ void main() {
         tagline: 'Amazing!',
       );
 
-      when(() => mockRepository.getMovieDetails(1)).thenAnswer(
-        (_) async => movieDetail,
-      );
+      when(
+        () => mockRepository.getMovieDetails(1),
+      ).thenAnswer((_) async => movieDetail);
 
       final container = createContainer();
 
@@ -51,9 +51,9 @@ void main() {
     });
 
     test('handles errors', () async {
-      when(() => mockRepository.getMovieDetails(1)).thenThrow(
-        Exception('Network error'),
-      );
+      when(
+        () => mockRepository.getMovieDetails(1),
+      ).thenThrow(Exception('Network error'));
 
       final container = createContainer();
 
@@ -92,26 +92,20 @@ void main() {
         tagline: '',
       );
 
-      when(() => mockRepository.getMovieDetails(1)).thenAnswer(
-        (_) async => movie1,
-      );
-      when(() => mockRepository.getMovieDetails(2)).thenAnswer(
-        (_) async => movie2,
-      );
+      when(
+        () => mockRepository.getMovieDetails(1),
+      ).thenAnswer((_) async => movie1);
+      when(
+        () => mockRepository.getMovieDetails(2),
+      ).thenAnswer((_) async => movie2);
 
       final container = createContainer();
 
       await container.read(movieDetailsProvider(1).future);
       await container.read(movieDetailsProvider(2).future);
 
-      expect(
-        container.read(movieDetailsProvider(1)).value,
-        movie1,
-      );
-      expect(
-        container.read(movieDetailsProvider(2)).value,
-        movie2,
-      );
+      expect(container.read(movieDetailsProvider(1)).value, movie1);
+      expect(container.read(movieDetailsProvider(2)).value, movie2);
 
       verify(() => mockRepository.getMovieDetails(1)).called(1);
       verify(() => mockRepository.getMovieDetails(2)).called(1);

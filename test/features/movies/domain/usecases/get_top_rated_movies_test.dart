@@ -18,7 +18,7 @@ void main() {
   test('calls repository.getTopRated with provided page', () async {
     when(() => mockRepository.getTopRated(page: 1)).thenAnswer(
       (_) async => [
-        MovieEntity(
+        const MovieEntity(
           id: 2,
           title: 'Top Rated',
           posterPath: '/poster2.jpg',

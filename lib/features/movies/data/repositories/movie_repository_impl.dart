@@ -8,9 +8,8 @@ import 'package:movie_universe_app/features/movies/domain/entities/movie_entity.
 import 'package:movie_universe_app/features/movies/domain/repositories/movie_repository.dart';
 
 class MovieRepositoryImpl implements MovieRepository {
-  final MovieRemoteDataSource _dataSource;
-
   MovieRepositoryImpl(this._dataSource);
+  final MovieRemoteDataSource _dataSource;
 
   @override
   Future<List<MovieEntity>> getPopular({int page = 1}) async {

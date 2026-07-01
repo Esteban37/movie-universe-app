@@ -26,7 +26,10 @@ class SearchResultCard extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(movie.releaseDate, style: Theme.of(context).textTheme.bodySmall),
+            Text(
+              movie.releaseDate,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
             Row(
               children: [
                 const Icon(Icons.star, size: 14, color: Colors.amber),

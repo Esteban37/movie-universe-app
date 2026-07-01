@@ -43,5 +43,5 @@ class TopRatedMoviesNotifier extends AsyncNotifier<List<MovieEntity>> {
 
 final topRatedMoviesProvider =
     AsyncNotifierProvider<TopRatedMoviesNotifier, List<MovieEntity>>(
-  TopRatedMoviesNotifier.new,
-);
+      TopRatedMoviesNotifier.new,
+    );

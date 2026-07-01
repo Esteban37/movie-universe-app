@@ -46,10 +46,8 @@ class _MovieDetailContent extends StatelessWidget {
               'https://image.tmdb.org/t/p/w780${details.backdropPath}',
               height: 200,
               fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => Container(
-                height: 200,
-                color: Colors.grey.shade900,
-              ),
+              errorBuilder: (_, _, _) =>
+                  Container(height: 200, color: Colors.grey.shade900),
             ),
           Padding(
             padding: const EdgeInsets.all(16),
@@ -81,16 +79,17 @@ class _MovieDetailContent extends StatelessWidget {
                         children: [
                           Text(
                             details.title,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineSmall
+                            style: Theme.of(context).textTheme.headlineSmall
                                 ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              const Icon(Icons.star,
-                                  size: 18, color: Colors.amber),
+                              const Icon(
+                                Icons.star,
+                                size: 18,
+                                color: Colors.amber,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 details.voteAverage.toStringAsFixed(1),

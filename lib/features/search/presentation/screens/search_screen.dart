@@ -44,8 +44,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         loading: () => const LoadingView(),
         error: (error, _) => ErrorView(
           message: error.toString(),
-          onRetry: () =>
-              ref.read(searchProvider.notifier).onQueryChanged(_searchController.text),
+          onRetry: () => ref
+              .read(searchProvider.notifier)
+              .onQueryChanged(_searchController.text),
         ),
         data: (movies) {
           if (_searchController.text.isNotEmpty && movies.isEmpty) {
@@ -56,11 +57,14 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           }
           return RefreshIndicator(
             onRefresh: () async {
-              ref.read(searchProvider.notifier).onQueryChanged(_searchController.text);
+              ref
+                  .read(searchProvider.notifier)
+                  .onQueryChanged(_searchController.text);
             },
             child: ListView.builder(
               itemCount: movies.length,
-              itemBuilder: (context, index) => SearchResultCard(movie: movies[index]),
+              itemBuilder: (context, index) =>
+                  SearchResultCard(movie: movies[index]),
             ),
           );
         },

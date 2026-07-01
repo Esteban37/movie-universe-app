@@ -47,7 +47,7 @@ void main() {
 
     test('triggers search after debounce on non-empty query', () async {
       when(() => mockSearchMovies.call('test', page: 1)).thenAnswer(
-        (_) async => SearchResultEntity(
+        (_) async => const SearchResultEntity(
           page: 1,
           totalPages: 1,
           results: [
@@ -76,26 +76,29 @@ void main() {
       verify(() => mockSearchMovies.call('test', page: 1)).called(1);
     });
 
-    test('clears results when query becomes empty after previous search', () async {
-      final container = createContainer();
-      final notifier = container.read(searchProvider.notifier);
+    test(
+      'clears results when query becomes empty after previous search',
+      () async {
+        final container = createContainer();
+        final notifier = container.read(searchProvider.notifier);
 
-      notifier.onQueryChanged('test');
-      await Future.delayed(const Duration(milliseconds: 100));
+        notifier.onQueryChanged('test');
+        await Future.delayed(const Duration(milliseconds: 100));
 
-      notifier.onQueryChanged('');
+        notifier.onQueryChanged('');
 
-      await Future.delayed(const Duration(milliseconds: 100));
+        await Future.delayed(const Duration(milliseconds: 100));
 
-      final state = container.read(searchProvider);
-      expect(state, isA<AsyncData<List<MovieEntity>>>());
-      expect(state.value, isEmpty);
-    });
+        final state = container.read(searchProvider);
+        expect(state, isA<AsyncData<List<MovieEntity>>>());
+        expect(state.value, isEmpty);
+      },
+    );
 
     test('handles error state', () async {
-      when(() => mockSearchMovies.call('error', page: 1)).thenThrow(
-        Exception('API error'),
-      );
+      when(
+        () => mockSearchMovies.call('error', page: 1),
+      ).thenThrow(Exception('API error'));
 
       final container = createContainer();
       final notifier = container.read(searchProvider.notifier);
