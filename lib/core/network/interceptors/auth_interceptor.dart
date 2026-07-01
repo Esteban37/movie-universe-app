@@ -8,7 +8,7 @@ class AuthInterceptor extends Interceptor {
       handler.next(options);
       return;
     }
-    final token = dotenv.env['TMDB_ACCESS_TOKEN'];
+    final token = dotenv.env['TMDB_ACCESS_TOKEN']?.trim();
     if (token != null && token.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $token';
     }

@@ -44,6 +44,19 @@ class _MovieListScreenState extends ConsumerState<MovieListScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Movies'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            tooltip: 'Search movies',
+            onPressed: () {
+              FluroRouter.appRouter.navigateTo(
+                context,
+                '/search',
+                transition: TransitionType.fadeIn,
+              );
+            },
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
