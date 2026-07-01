@@ -29,7 +29,7 @@ void main() {
     });
 
     test('props are correct for equality', () {
-      final sameMovie = MovieEntity(
+      const sameMovie = MovieEntity(
         id: 1,
         title: 'Test Movie',
         posterPath: '/poster.jpg',

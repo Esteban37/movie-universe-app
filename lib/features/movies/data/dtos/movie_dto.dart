@@ -14,5 +14,6 @@ sealed class MovieDTO with _$MovieDTO {
     @JsonKey(name: 'overview') required String? overview,
   }) = _MovieDTO;
 
-  factory MovieDTO.fromJson(Map<String, dynamic> json) => _$MovieDTOFromJson(json);
+  factory MovieDTO.fromJson(Map<String, dynamic> json) =>
+      _$MovieDTOFromJson(json);
 }

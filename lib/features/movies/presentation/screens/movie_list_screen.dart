@@ -70,16 +70,14 @@ class _MovieListScreenState extends ConsumerState<MovieListScreen>
         children: [
           _MovieTab(
             provider: popularMoviesProvider,
-            loadNextPage: () => ref.read(
-              popularMoviesProvider.notifier,
-            ).loadNextPage(),
+            loadNextPage: () =>
+                ref.read(popularMoviesProvider.notifier).loadNextPage(),
             columnCount: _columnCount(MediaQuery.of(context).size.width),
           ),
           _MovieTab(
             provider: topRatedMoviesProvider,
-            loadNextPage: () => ref.read(
-              topRatedMoviesProvider.notifier,
-            ).loadNextPage(),
+            loadNextPage: () =>
+                ref.read(topRatedMoviesProvider.notifier).loadNextPage(),
             columnCount: _columnCount(MediaQuery.of(context).size.width),
           ),
         ],
@@ -95,8 +93,11 @@ class _MovieTab extends ConsumerStatefulWidget {
     required this.columnCount,
   });
 
-  final AsyncNotifierProvider<AsyncNotifier<List<MovieEntity>>,
-      List<MovieEntity>> provider;
+  final AsyncNotifierProvider<
+    AsyncNotifier<List<MovieEntity>>,
+    List<MovieEntity>
+  >
+  provider;
   final VoidCallback loadNextPage;
   final int columnCount;
 

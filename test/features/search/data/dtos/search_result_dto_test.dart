@@ -38,11 +38,7 @@ void main() {
     });
 
     test('handles empty results list', () {
-      final emptyJson = {
-        'page': 1,
-        'total_pages': 0,
-        'results': [],
-      };
+      final emptyJson = {'page': 1, 'total_pages': 0, 'results': []};
       final dto = SearchResultDTO.fromJson(emptyJson);
       expect(dto.results, isEmpty);
       expect(dto.totalPages, 0);

@@ -27,7 +27,7 @@ void main() {
     test('loads first page on initialization', () async {
       when(() => mockRepository.getPopular(page: 1)).thenAnswer(
         (_) async => [
-          MovieEntity(
+          const MovieEntity(
             id: 1,
             title: 'Movie 1',
             posterPath: '/poster1.jpg',
@@ -69,12 +69,12 @@ void main() {
         ),
       ];
 
-      when(() => mockRepository.getPopular(page: 1)).thenAnswer(
-        (_) async => page1Movies,
-      );
-      when(() => mockRepository.getPopular(page: 2)).thenAnswer(
-        (_) async => page2Movies,
-      );
+      when(
+        () => mockRepository.getPopular(page: 1),
+      ).thenAnswer((_) async => page1Movies);
+      when(
+        () => mockRepository.getPopular(page: 2),
+      ).thenAnswer((_) async => page2Movies);
 
       final container = createContainer();
 
@@ -92,7 +92,7 @@ void main() {
     test('prevents duplicate page loads', () async {
       when(() => mockRepository.getPopular(page: 1)).thenAnswer(
         (_) async => [
-          MovieEntity(
+          const MovieEntity(
             id: 1,
             title: 'Movie 1',
             posterPath: '/poster1.jpg',
@@ -104,7 +104,7 @@ void main() {
       );
       when(() => mockRepository.getPopular(page: 2)).thenAnswer(
         (_) async => [
-          MovieEntity(
+          const MovieEntity(
             id: 2,
             title: 'Movie 2',
             posterPath: '/poster2.jpg',
@@ -133,7 +133,7 @@ void main() {
     test('loadNextPage handles empty response as end of list', () async {
       when(() => mockRepository.getPopular(page: 1)).thenAnswer(
         (_) async => [
-          MovieEntity(
+          const MovieEntity(
             id: 1,
             title: 'Movie 1',
             posterPath: '/poster1.jpg',
@@ -143,9 +143,9 @@ void main() {
           ),
         ],
       );
-      when(() => mockRepository.getPopular(page: 2)).thenAnswer(
-        (_) async => [],
-      );
+      when(
+        () => mockRepository.getPopular(page: 2),
+      ).thenAnswer((_) async => []);
 
       final container = createContainer();
 

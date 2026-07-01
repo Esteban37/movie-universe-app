@@ -10,10 +10,7 @@ class SearchRemoteDataSource {
   Future<SearchResultDTO> search(String query, {int page = 1}) async {
     final response = await _dio.get(
       ApiConstants.searchMovie,
-      queryParameters: {
-        'query': query,
-        'page': page,
-      },
+      queryParameters: {'query': query, 'page': page},
     );
     return SearchResultDTO.fromJson(response.data);
   }

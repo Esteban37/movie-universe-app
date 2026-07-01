@@ -20,8 +20,5 @@ sealed class MovieDetailEntity with _$MovieDetailEntity {
 
 @freezed
 sealed class Genre with _$Genre {
-  const factory Genre({
-    required int id,
-    required String name,
-  }) = _Genre;
+  const factory Genre({required int id, required String name}) = _Genre;
 }

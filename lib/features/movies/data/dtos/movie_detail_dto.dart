@@ -18,7 +18,8 @@ sealed class MovieDetailDTO with _$MovieDetailDTO {
     @JsonKey(name: 'tagline') required String tagline,
   }) = _MovieDetailDTO;
 
-  factory MovieDetailDTO.fromJson(Map<String, dynamic> json) => _$MovieDetailDTOFromJson(json);
+  factory MovieDetailDTO.fromJson(Map<String, dynamic> json) =>
+      _$MovieDetailDTOFromJson(json);
 }
 
 @freezed
@@ -28,5 +29,6 @@ sealed class GenreDTO with _$GenreDTO {
     @JsonKey(name: 'name') required String name,
   }) = _GenreDTO;
 
-  factory GenreDTO.fromJson(Map<String, dynamic> json) => _$GenreDTOFromJson(json);
+  factory GenreDTO.fromJson(Map<String, dynamic> json) =>
+      _$GenreDTOFromJson(json);
 }

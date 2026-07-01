@@ -17,10 +17,12 @@ void main() {
 
   group('search', () {
     test('calls /search/movie with query and page parameters', () async {
-      when(() => mockDio.get(
-            '/search/movie',
-            queryParameters: any(named: 'queryParameters'),
-          )).thenAnswer(
+      when(
+        () => mockDio.get(
+          '/search/movie',
+          queryParameters: any(named: 'queryParameters'),
+        ),
+      ).thenAnswer(
         (_) async => Response(
           data: {
             'page': 1,
@@ -46,23 +48,23 @@ void main() {
       expect(result, isA<SearchResultDTO>());
       expect(result.page, 1);
       expect(result.results.length, 1);
-      verify(() => mockDio.get(
-            '/search/movie',
-            queryParameters: {'query': 'test', 'page': 1},
-          )).called(1);
+      verify(
+        () => mockDio.get(
+          '/search/movie',
+          queryParameters: {'query': 'test', 'page': 1},
+        ),
+      ).called(1);
     });
 
     test('handles empty results', () async {
-      when(() => mockDio.get(
-            '/search/movie',
-            queryParameters: any(named: 'queryParameters'),
-          )).thenAnswer(
+      when(
+        () => mockDio.get(
+          '/search/movie',
+          queryParameters: any(named: 'queryParameters'),
+        ),
+      ).thenAnswer(
         (_) async => Response(
-          data: {
-            'page': 1,
-            'total_pages': 0,
-            'results': [],
-          },
+          data: {'page': 1, 'total_pages': 0, 'results': []},
           requestOptions: RequestOptions(path: '/search/movie'),
           statusCode: 200,
         ),

@@ -39,5 +39,5 @@ class SearchNotifier extends Notifier<AsyncValue<List<MovieEntity>>> {
 
 final searchProvider =
     NotifierProvider<SearchNotifier, AsyncValue<List<MovieEntity>>>(
-  SearchNotifier.new,
-);
+      SearchNotifier.new,
+    );

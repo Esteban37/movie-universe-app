@@ -18,16 +18,14 @@ void main() {
 
   group('getPopular', () {
     test('calls /movie/popular with page parameter', () async {
-      when(() => mockDio.get(
-            '/movie/popular',
-            queryParameters: any(named: 'queryParameters'),
-          )).thenAnswer(
+      when(
+        () => mockDio.get(
+          '/movie/popular',
+          queryParameters: any(named: 'queryParameters'),
+        ),
+      ).thenAnswer(
         (_) async => Response(
-          data: {
-            'page': 1,
-            'total_pages': 500,
-            'results': [],
-          },
+          data: {'page': 1, 'total_pages': 500, 'results': []},
           requestOptions: RequestOptions(path: '/movie/popular'),
           statusCode: 200,
         ),
@@ -37,25 +35,22 @@ void main() {
 
       expect(result, isA<MovieResponseDTO>());
       expect(result.page, 1);
-      verify(() => mockDio.get(
-            '/movie/popular',
-            queryParameters: {'page': 1},
-          )).called(1);
+      verify(
+        () => mockDio.get('/movie/popular', queryParameters: {'page': 1}),
+      ).called(1);
     });
   });
 
   group('getTopRated', () {
     test('calls /movie/top_rated with page parameter', () async {
-      when(() => mockDio.get(
-            '/movie/top_rated',
-            queryParameters: any(named: 'queryParameters'),
-          )).thenAnswer(
+      when(
+        () => mockDio.get(
+          '/movie/top_rated',
+          queryParameters: any(named: 'queryParameters'),
+        ),
+      ).thenAnswer(
         (_) async => Response(
-          data: {
-            'page': 1,
-            'total_pages': 200,
-            'results': [],
-          },
+          data: {'page': 1, 'total_pages': 200, 'results': []},
           requestOptions: RequestOptions(path: '/movie/top_rated'),
           statusCode: 200,
         ),
@@ -64,10 +59,9 @@ void main() {
       final result = await dataSource.getTopRated(page: 1);
 
       expect(result, isA<MovieResponseDTO>());
-      verify(() => mockDio.get(
-            '/movie/top_rated',
-            queryParameters: {'page': 1},
-          )).called(1);
+      verify(
+        () => mockDio.get('/movie/top_rated', queryParameters: {'page': 1}),
+      ).called(1);
     });
   });
 

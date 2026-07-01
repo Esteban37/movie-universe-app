@@ -44,11 +44,7 @@ void main() {
     });
 
     test('handles empty results', () {
-      final emptyJson = {
-        'page': 1,
-        'total_pages': 0,
-        'results': [],
-      };
+      final emptyJson = {'page': 1, 'total_pages': 0, 'results': []};
       final response = MovieResponseDTO.fromJson(emptyJson);
       expect(response.results, isEmpty);
     });

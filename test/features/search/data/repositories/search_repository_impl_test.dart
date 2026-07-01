@@ -9,7 +9,8 @@ import 'package:movie_universe_app/features/search/data/dtos/search_result_dto.d
 import 'package:movie_universe_app/features/search/data/repositories/search_repository_impl.dart';
 import 'package:movie_universe_app/features/search/domain/entities/search_result_entity.dart';
 
-class MockSearchRemoteDataSource extends Mock implements SearchRemoteDataSource {}
+class MockSearchRemoteDataSource extends Mock
+    implements SearchRemoteDataSource {}
 
 void main() {
   late MockSearchRemoteDataSource mockDataSource;
@@ -23,7 +24,7 @@ void main() {
   group('searchMovies', () {
     test('maps SearchResultDTO to SearchResultEntity', () async {
       when(() => mockDataSource.search('test', page: 1)).thenAnswer(
-        (_) async => SearchResultDTO(
+        (_) async => const SearchResultDTO(
           page: 1,
           totalPages: 5,
           results: [
@@ -62,19 +63,12 @@ void main() {
         ),
       );
 
-      expect(
-        () => repository.searchMovies('test'),
-        throwsA(isA<Failure>()),
-      );
+      expect(() => repository.searchMovies('test'), throwsA(isA<Failure>()));
     });
 
     test('handles empty results', () async {
       when(() => mockDataSource.search('empty', page: 1)).thenAnswer(
-        (_) async => SearchResultDTO(
-          page: 1,
-          totalPages: 0,
-          results: [],
-        ),
+        (_) async => const SearchResultDTO(page: 1, totalPages: 0, results: []),
       );
 
       final result = await repository.searchMovies('empty');
@@ -85,11 +79,8 @@ void main() {
 
     test('passes page parameter to data source', () async {
       when(() => mockDataSource.search('test', page: 3)).thenAnswer(
-        (_) async => SearchResultDTO(
-          page: 3,
-          totalPages: 10,
-          results: [],
-        ),
+        (_) async =>
+            const SearchResultDTO(page: 3, totalPages: 10, results: []),
       );
 
       await repository.searchMovies('test', page: 3);

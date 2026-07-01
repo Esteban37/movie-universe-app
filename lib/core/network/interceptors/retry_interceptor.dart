@@ -18,11 +18,7 @@ class RetryInterceptor extends Interceptor {
     _retry(err, handler, 0);
   }
 
-  void _retry(
-    DioException err,
-    ErrorInterceptorHandler handler,
-    int attempt,
-  ) {
+  void _retry(DioException err, ErrorInterceptorHandler handler, int attempt) {
     if (!_shouldRetry(err) || attempt >= maxRetries) {
       handler.next(err);
       return;
