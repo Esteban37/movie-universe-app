@@ -1,0 +1,15 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    - always_declare_return_types
+    - annotate_overrides
+    - avoid_print
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - prefer_final_locals
+    - prefer_single_quotes
+    - sort_constructors_first
+    - sort_unnamed_constructors_first
+    - unawaited_futures
+    - use_super_parameters
