@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/entities/movie_detail_entity.dart';
 import '../../../../core/media/tmdb_image.dart';
+import '../../../../core/media/tmdb_image_provider.dart';
 import '../../../../shared/widgets/content_state.dart';
 import '../../../../shared/widgets/skeleton_loader.dart';
 import '../../../../shared/widgets/hero_backdrop.dart';
@@ -40,16 +41,20 @@ class MovieDetailScreen extends ConsumerWidget {
         asyncValue: detailsAsync,
         onLoading: () => const SkeletonLoader(variant: SkeletonVariant.detail),
         onRetry: () => ref.invalidate(movieDetailsProvider(id)),
-        onData: (details) => _ImmersiveDetailView(details: details),
+        onData: (details) {
+          final imageUrls = ref.watch(tmdbImageUrlProvider);
+          return _ImmersiveDetailView(details: details, imageUrls: imageUrls);
+        },
       ),
     );
   }
 }
 
 class _ImmersiveDetailView extends StatefulWidget {
-  const _ImmersiveDetailView({required this.details});
+  const _ImmersiveDetailView({required this.details, required this.imageUrls});
 
   final MovieDetailEntity details;
+  final TmdbImageUrl imageUrls;
 
   @override
   State<_ImmersiveDetailView> createState() => _ImmersiveDetailViewState();
@@ -155,10 +160,10 @@ class _ImmersiveDetailViewState extends State<_ImmersiveDetailView>
   @override
   Widget build(BuildContext context) {
     final details = widget.details;
-    final backdropUrl = TmdbImageUrl.backdrop(details.backdropPath);
+    final imageUrls = widget.imageUrls;
+    final backdropUrl = imageUrls.backdrop(details.backdropPath);
     final posterUrl =
-        TmdbImageUrl.poster(details.posterPath, size: TmdbPosterSize.large) ??
-        '';
+        imageUrls.poster(details.posterPath, size: TmdbPosterSize.large) ?? '';
     final theme = Theme.of(context);
     final isTablet = MediaQuery.of(context).size.width >= _phoneBreakpoint;
 

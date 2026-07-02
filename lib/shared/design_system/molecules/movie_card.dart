@@ -5,14 +5,20 @@ import '../../../core/media/tmdb_image.dart';
 import '../atoms/rating_badge.dart';
 
 class MovieCard extends StatelessWidget {
-  const MovieCard({super.key, required this.movie, required this.onTap});
+  const MovieCard({
+    super.key,
+    required this.movie,
+    required this.onTap,
+    TmdbImageUrl? imageUrls,
+  }) : imageUrls = imageUrls ?? const TmdbImageUrl();
 
   final MovieEntity movie;
   final VoidCallback onTap;
+  final TmdbImageUrl imageUrls;
 
   @override
   Widget build(BuildContext context) {
-    final posterUrl = TmdbImageUrl.poster(
+    final posterUrl = imageUrls.poster(
       movie.posterPath,
       size: TmdbPosterSize.medium,
     );

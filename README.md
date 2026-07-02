@@ -311,15 +311,27 @@ flutter run
 
 # 🔐 Environment Configuration
 
-Create a `.env` file (or your preferred secure configuration strategy) containing your TMDB API credentials.
+Environment-specific source files live outside the bundle (gitignored):
 
-Example:
+- `.env.development` — local development (default)
+- `.env.production` — release builds
 
-```text
-TMDB_ACCESS_TOKEN=YOUR_ACCESS_TOKEN
+Only **one** file is bundled in the app: `.env`. Copy the target environment before running or building:
+
+```bash
+# Development
+cp .env.development.example .env.development
+cp .env.development .env
+flutter run
+
+# Production (CI or local release)
+cp .env.production .env
+flutter build apk --release
 ```
 
-> The API token is intentionally excluded from the repository for security reasons.
+See `.env.example` for all supported variables (`APP_ENV`, `TMDB_BASE_URL`, etc.).
+
+> Secrets are excluded from the repository. CI should generate `.env` from pipeline secrets before `flutter build`.
 
 ---
 

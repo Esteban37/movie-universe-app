@@ -5,13 +5,18 @@ import '../../../core/media/tmdb_image.dart';
 import '../atoms/rating_badge.dart';
 
 class SearchResultCard extends StatelessWidget {
-  const SearchResultCard({super.key, required this.movie});
+  const SearchResultCard({
+    super.key,
+    required this.movie,
+    TmdbImageUrl? imageUrls,
+  }) : imageUrls = imageUrls ?? const TmdbImageUrl();
 
   final MovieEntity movie;
+  final TmdbImageUrl imageUrls;
 
   @override
   Widget build(BuildContext context) {
-    final posterUrl = TmdbImageUrl.poster(
+    final posterUrl = imageUrls.poster(
       movie.posterPath,
       size: TmdbPosterSize.small,
     );

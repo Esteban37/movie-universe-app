@@ -7,14 +7,19 @@ import '../atoms/poster_image.dart';
 import '../molecules/movie_meta_row.dart';
 
 class MovieDetailBody extends StatelessWidget {
-  const MovieDetailBody({super.key, required this.details});
+  const MovieDetailBody({
+    super.key,
+    required this.details,
+    TmdbImageUrl? imageUrls,
+  }) : imageUrls = imageUrls ?? const TmdbImageUrl();
 
   final MovieDetailEntity details;
+  final TmdbImageUrl imageUrls;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final backdropUrl = TmdbImageUrl.backdrop(details.backdropPath);
+    final backdropUrl = imageUrls.backdrop(details.backdropPath);
 
     return SingleChildScrollView(
       child: Column(
@@ -45,6 +50,7 @@ class MovieDetailBody extends StatelessWidget {
                       size: TmdbPosterSize.large,
                       borderRadius: BorderRadius.circular(8),
                       placeholderIconSize: 48,
+                      imageUrls: imageUrls,
                     ),
                     const SizedBox(width: 16),
                     Expanded(

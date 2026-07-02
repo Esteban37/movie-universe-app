@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 
+import '../config/app_environment.dart';
 import 'api_constants.dart';
 import 'interceptors/auth_interceptor.dart';
 import 'interceptors/logging_interceptor.dart';
@@ -8,10 +9,10 @@ import 'interceptors/retry_interceptor.dart';
 class DioClient {
   DioClient._();
 
-  static Dio create() {
+  static Dio create(EnvironmentConfig config) {
     final dio = Dio(
       BaseOptions(
-        baseUrl: ApiConstants.baseUrl,
+        baseUrl: config.apiBaseUrl,
         connectTimeout: ApiConstants.connectTimeout,
         receiveTimeout: ApiConstants.receiveTimeout,
         headers: {
@@ -23,7 +24,7 @@ class DioClient {
 
     dio.interceptors.addAll([
       AuthInterceptor(),
-      LoggingInterceptor(),
+      if (config.enableNetworkLogging) LoggingInterceptor(),
       RetryInterceptor(dio: dio),
     ]);
 

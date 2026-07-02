@@ -35,6 +35,8 @@ bin/
 
 ### Environment ###
 .env
+.env.development
+.env.production
 .env.local
 
 ### Flutter ###
