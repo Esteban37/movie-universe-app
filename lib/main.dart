@@ -6,6 +6,7 @@ import 'package:fluro/fluro.dart';
 import 'core/network/dio_provider.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/theme_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,10 +23,15 @@ class MovieUniverseApp extends ConsumerWidget {
 
     ref.read(dioProvider);
 
+    final themeMode = ref.watch(themeModeProvider);
+
     return MaterialApp(
       title: 'Movie Universe',
-      theme: AppTheme.lightTheme,
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      themeMode: themeMode,
       onGenerateRoute: FluroRouter.appRouter.generator,
+      debugShowCheckedModeBanner: false,
     );
   }
 }

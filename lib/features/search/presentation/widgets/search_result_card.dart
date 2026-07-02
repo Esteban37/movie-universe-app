@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluro/fluro.dart';
+import 'package:movie_universe_app/core/router/app_router.dart';
 import 'package:movie_universe_app/features/movies/domain/entities/movie_entity.dart';
 
 class SearchResultCard extends StatelessWidget {
@@ -40,11 +40,7 @@ class SearchResultCard extends StatelessWidget {
           ],
         ),
         onTap: () {
-          FluroRouter.appRouter.navigateTo(
-            context,
-            '/movie/${movie.id}',
-            transition: TransitionType.fadeIn,
-          );
+          AppRouter.pushMovieDetail(context, '${movie.id}');
         },
       ),
     );

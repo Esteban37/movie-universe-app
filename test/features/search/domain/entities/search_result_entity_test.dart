@@ -4,11 +4,7 @@ import 'package:movie_universe_app/features/movies/domain/entities/movie_entity.
 
 void main() {
   group('SearchResultEntity', () {
-    const emptyResult = SearchResultEntity(
-      page: 0,
-      totalPages: 0,
-      results: [],
-    );
+    const emptyResult = SearchResultEntity(page: 0, totalPages: 0, results: []);
 
     const resultWithMovies = SearchResultEntity(
       page: 1,
@@ -37,11 +33,7 @@ void main() {
     });
 
     test('supports copyWith', () {
-      const modified = SearchResultEntity(
-        page: 1,
-        totalPages: 5,
-        results: [],
-      );
+      const modified = SearchResultEntity(page: 1, totalPages: 5, results: []);
       final updated = modified.copyWith(page: 2);
       expect(updated.page, 2);
       expect(updated.totalPages, 5);
