@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:movie_universe_app/core/errors/failures.dart';
-import 'package:movie_universe_app/features/movies/data/dtos/movie_dto.dart';
+import 'package:movie_universe_app/core/data/dtos/tmdb_movie_dto.dart';
 import 'package:movie_universe_app/features/movies/domain/entities/movie_entity.dart';
 import 'package:movie_universe_app/features/search/data/datasources/search_remote_datasource.dart';
 import 'package:movie_universe_app/features/search/data/dtos/search_result_dto.dart';
@@ -28,7 +28,7 @@ void main() {
           page: 1,
           totalPages: 5,
           results: [
-            MovieDTO(
+            TmdbMovieDto(
               id: 1,
               title: 'Test Movie',
               posterPath: '/poster.jpg',

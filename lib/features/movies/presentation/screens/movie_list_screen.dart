@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluro/fluro.dart';
 
 import '../../../../core/errors/failures.dart';
+import '../../../../core/media/tmdb_image_provider.dart';
 import '../../../../core/router/app_router.dart';
 import '../../domain/entities/movie_entity.dart';
+import '../../../../shared/mappers/movie_display_mapper.dart';
 import '../../../../shared/widgets/loading_view.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../../../../shared/widgets/empty_view.dart';
@@ -132,6 +134,7 @@ class _MovieTabState extends ConsumerState<_MovieTab> {
   @override
   Widget build(BuildContext context) {
     final moviesAsync = ref.watch(widget.provider);
+    final imageUrls = ref.watch(tmdbImageUrlProvider);
 
     return moviesAsync.when(
       loading: () => const LoadingView(),
@@ -159,7 +162,8 @@ class _MovieTabState extends ConsumerState<_MovieTab> {
           itemBuilder: (context, index) {
             final movie = movies[index];
             return MovieCard(
-              movie: movie,
+              movie: toMovieDisplayModel(movie),
+              imageUrls: imageUrls,
               onTap: () {
                 AppRouter.pushMovieDetail(context, '${movie.id}');
               },

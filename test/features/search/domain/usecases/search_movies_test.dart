@@ -28,7 +28,15 @@ void main() {
     verify(() => mockRepository.searchMovies('test', page: 1)).called(1);
   });
 
-  test('uses default page 1 when page is omitted', () async {
+  test('returns empty result without calling repository for blank query', () async {
+    final result = await useCase('   ');
+
+    expect(result.results, isEmpty);
+    expect(result.totalPages, 0);
+    verifyNever(() => mockRepository.searchMovies(any(), page: any(named: 'page')));
+  });
+
+  test('trims query before calling repository', () async {
     when(() => mockRepository.searchMovies('test', page: 1)).thenAnswer(
       (_) async => const SearchResultEntity(
         page: 1,
@@ -46,7 +54,7 @@ void main() {
       ),
     );
 
-    final result = await useCase('test');
+    final result = await useCase('  test  ');
 
     expect(result.results.length, 1);
     verify(() => mockRepository.searchMovies('test', page: 1)).called(1);

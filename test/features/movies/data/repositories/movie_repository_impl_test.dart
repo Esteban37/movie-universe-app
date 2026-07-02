@@ -4,7 +4,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:movie_universe_app/core/errors/failures.dart';
 import 'package:movie_universe_app/features/movies/data/datasources/movie_remote_datasource.dart';
 import 'package:movie_universe_app/features/movies/data/dtos/movie_detail_dto.dart';
-import 'package:movie_universe_app/features/movies/data/dtos/movie_dto.dart';
+import 'package:movie_universe_app/core/data/dtos/tmdb_movie_dto.dart';
 import 'package:movie_universe_app/features/movies/data/dtos/movie_response_dto.dart';
 import 'package:movie_universe_app/features/movies/data/repositories/movie_repository_impl.dart';
 import 'package:movie_universe_app/features/movies/domain/entities/movie_detail_entity.dart';
@@ -28,7 +28,7 @@ void main() {
           page: 1,
           totalPages: 1,
           results: [
-            MovieDTO(
+            TmdbMovieDto(
               id: 1,
               title: 'Test',
               posterPath: '/poster.jpg',
@@ -71,7 +71,7 @@ void main() {
           page: 1,
           totalPages: 1,
           results: [
-            MovieDTO(
+            TmdbMovieDto(
               id: 2,
               title: 'Top Rated',
               posterPath: '/poster2.jpg',

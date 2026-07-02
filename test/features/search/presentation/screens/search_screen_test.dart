@@ -5,7 +5,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:movie_universe_app/core/errors/failures.dart';
 import 'package:movie_universe_app/features/search/domain/entities/search_result_entity.dart';
 import 'package:movie_universe_app/features/search/domain/usecases/search_movies.dart';
-import 'package:movie_universe_app/features/search/presentation/providers/search_repository_provider.dart';
+import 'package:movie_universe_app/features/search/presentation/providers/search_usecase_providers.dart';
 import 'package:movie_universe_app/features/search/presentation/screens/search_screen.dart';
 
 class MockSearchMovies extends Mock implements SearchMovies {}
@@ -20,7 +20,7 @@ void main() {
   Widget createApp() {
     return ProviderScope(
       overrides: [
-        searchRepositoryProvider.overrideWith((ref) => mockSearchMovies),
+        searchMoviesProvider.overrideWith((ref) => mockSearchMovies),
       ],
       child: const MaterialApp(home: SearchScreen()),
     );

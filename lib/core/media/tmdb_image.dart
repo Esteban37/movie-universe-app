@@ -1,3 +1,5 @@
+import '../config/app_environment.dart';
+
 /// Semantic TMDB poster sizes mapped to official size segments.
 enum TmdbPosterSize {
   /// Thumbnail (list leading) — `w92`
@@ -12,15 +14,12 @@ enum TmdbPosterSize {
 
 /// Builds fully-qualified TMDB image URLs from path segments.
 class TmdbImageUrl {
-  TmdbImageUrl._();
+  const TmdbImageUrl([this.baseUrl = EnvironmentConfig.defaultImageBaseUrl]);
 
-  static const baseUrl = 'https://image.tmdb.org/t/p/';
+  final String baseUrl;
 
   /// Returns a poster URL or `null` when [path] is null/empty.
-  static String? poster(
-    String? path, {
-    TmdbPosterSize size = TmdbPosterSize.medium,
-  }) {
+  String? poster(String? path, {TmdbPosterSize size = TmdbPosterSize.medium}) {
     if (path == null || path.isEmpty) {
       return null;
     }
@@ -33,7 +32,7 @@ class TmdbImageUrl {
   }
 
   /// Returns a backdrop URL or `null` when [path] is null/empty.
-  static String? backdrop(String? path) {
+  String? backdrop(String? path) {
     if (path == null || path.isEmpty) {
       return null;
     }

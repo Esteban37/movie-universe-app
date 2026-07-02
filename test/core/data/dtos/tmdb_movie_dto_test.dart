@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:movie_universe_app/features/movies/data/dtos/movie_dto.dart';
+import 'package:movie_universe_app/core/data/dtos/tmdb_movie_dto.dart';
 
 void main() {
-  group('MovieDTO', () {
+  group('TmdbMovieDto', () {
     final json = {
       'id': 1,
       'title': 'Test Movie',
@@ -13,7 +13,7 @@ void main() {
     };
 
     test('fromJson deserializes correctly', () {
-      final dto = MovieDTO.fromJson(json);
+      final dto = TmdbMovieDto.fromJson(json);
       expect(dto.id, 1);
       expect(dto.title, 'Test Movie');
       expect(dto.posterPath, '/poster.jpg');
@@ -23,7 +23,7 @@ void main() {
     });
 
     test('toJson serializes correctly', () {
-      final dto = MovieDTO.fromJson(json);
+      final dto = TmdbMovieDto.fromJson(json);
       final serialized = dto.toJson();
       expect(serialized['id'], 1);
       expect(serialized['title'], 'Test Movie');
@@ -40,7 +40,7 @@ void main() {
         'release_date': null,
         'overview': null,
       };
-      final dto = MovieDTO.fromJson(jsonWithNulls);
+      final dto = TmdbMovieDto.fromJson(jsonWithNulls);
       expect(dto.posterPath, isNull);
       expect(dto.releaseDate, isNull);
       expect(dto.overview, isNull);

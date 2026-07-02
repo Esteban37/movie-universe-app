@@ -1,0 +1,4 @@
+# Validates pubspec dependencies and excludes generated sources.
+exclude:
+  - "**/*.g.dart"
+  - "**/*.freezed.dart"

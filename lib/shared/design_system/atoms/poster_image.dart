@@ -12,7 +12,8 @@ class PosterImage extends StatelessWidget {
     this.borderRadius = BorderRadius.zero,
     this.fit = BoxFit.cover,
     this.placeholderIconSize = 48,
-  });
+    TmdbImageUrl? imageUrls,
+  }) : imageUrls = imageUrls ?? const TmdbImageUrl();
 
   final String? path;
   final double width;
@@ -21,11 +22,12 @@ class PosterImage extends StatelessWidget {
   final BorderRadius borderRadius;
   final BoxFit fit;
   final double placeholderIconSize;
+  final TmdbImageUrl imageUrls;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final url = TmdbImageUrl.poster(path, size: size);
+    final url = imageUrls.poster(path, size: size);
     final placeholder = Container(
       width: width,
       height: height,

@@ -7,6 +7,12 @@ class SearchMovies {
   final SearchRepository _repository;
 
   Future<SearchResultEntity> call(String query, {int page = 1}) {
-    return _repository.searchMovies(query, page: page);
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) {
+      return Future.value(
+        const SearchResultEntity(page: 1, totalPages: 0, results: []),
+      );
+    }
+    return _repository.searchMovies(trimmed, page: page);
   }
 }

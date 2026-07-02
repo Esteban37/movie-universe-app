@@ -38,8 +38,11 @@ void main() {
       );
     });
 
-    test('falls back to toString for non-failure errors', () {
-      expect(errorDisplayMessage(Exception('boom')), contains('Exception'));
+    test('falls back to generic message for non-failure errors', () {
+      expect(
+        errorDisplayMessage(Exception('boom')),
+        'Something unexpected happened.',
+      );
     });
   });
 }

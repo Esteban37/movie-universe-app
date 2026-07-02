@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_universe_app/core/utils/debouncer.dart';
 import 'package:movie_universe_app/features/movies/domain/entities/movie_entity.dart';
-import 'package:movie_universe_app/features/search/presentation/providers/search_repository_provider.dart';
+import 'package:movie_universe_app/features/search/presentation/providers/search_usecase_providers.dart';
 
 class SearchNotifier extends Notifier<AsyncValue<List<MovieEntity>>> {
   Debouncer? _debouncer;
@@ -29,7 +29,7 @@ class SearchNotifier extends Notifier<AsyncValue<List<MovieEntity>>> {
 
   Future<void> _performSearch() async {
     try {
-      final result = await ref.read(searchRepositoryProvider).call(_query);
+      final result = await ref.read(searchMoviesProvider).call(_query);
       state = AsyncData(result.results);
     } catch (e, st) {
       state = AsyncError(e, st);
