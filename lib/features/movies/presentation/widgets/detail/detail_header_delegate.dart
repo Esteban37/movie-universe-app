@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../core/media/tmdb_image.dart';
 import '../../../../../shared/design_system/atoms/poster_image.dart';
 import '../../../../../shared/widgets/hero_backdrop.dart';
-import 'immersive_detail_constants.dart';
+import '../../../../../shared/presentation/detail/immersive_detail_constants.dart';
 import 'immersive_movie_meta_row.dart';
 
 class DetailHeaderDelegate extends SliverPersistentHeaderDelegate {
@@ -162,7 +162,6 @@ class DetailHeaderDelegate extends SliverPersistentHeaderDelegate {
                           title,
                           style: titleStyle?.copyWith(
                             color: theme.colorScheme.onPrimary,
-                            fontWeight: FontWeight.bold,
                             shadows: [
                               Shadow(
                                 blurRadius: 8,

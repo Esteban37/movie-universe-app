@@ -15,7 +15,7 @@ class GenreChip extends StatelessWidget {
     return Chip(
       label: Text(
         label,
-        style: labelStyle ?? Theme.of(context).textTheme.bodyMedium,
+        style: labelStyle ?? Theme.of(context).textTheme.labelSmall,
       ),
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       visualDensity: VisualDensity.compact,

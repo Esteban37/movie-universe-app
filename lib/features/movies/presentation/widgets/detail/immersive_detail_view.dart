@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/media/tmdb_image.dart';
 import '../../../domain/entities/movie_detail_entity.dart';
+import '../../../../../shared/presentation/detail/immersive_detail_constants.dart';
+import '../../../../../shared/widgets/floating_detail_app_bar.dart';
 import 'detail_content.dart';
 import 'detail_header_delegate.dart';
-import 'floating_detail_app_bar.dart';
-import 'immersive_detail_constants.dart';
 
 class ImmersiveDetailView extends StatefulWidget {
   const ImmersiveDetailView({

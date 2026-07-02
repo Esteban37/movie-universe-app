@@ -29,13 +29,18 @@ class SearchResultCard extends StatelessWidget {
           placeholderIconSize: 46,
           imageUrls: imageUrls,
         ),
-        title: Text(movie.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+        title: Text(
+          movie.title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               movie.releaseDate,
-              style: Theme.of(context).textTheme.bodySmall,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
             RatingBadge(rating: movie.voteAverage, iconSize: 14),
           ],

@@ -1,8 +1,8 @@
 import 'package:movie_universe_app/features/search/domain/entities/search_result_entity.dart';
 import 'package:movie_universe_app/features/search/domain/repositories/search_repository.dart';
 
-class SearchMovies {
-  SearchMovies(this._repository);
+class SearchMedia {
+  SearchMedia(this._repository);
 
   final SearchRepository _repository;
 
@@ -13,6 +13,6 @@ class SearchMovies {
         const SearchResultEntity(page: 1, totalPages: 0, results: []),
       );
     }
-    return _repository.searchMovies(trimmed, page: page);
+    return _repository.searchMedia(trimmed, page: page);
   }
 }

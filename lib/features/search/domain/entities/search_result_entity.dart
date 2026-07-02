@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:movie_universe_app/features/movies/domain/entities/movie_entity.dart';
+import 'package:movie_universe_app/core/domain/entities/media_item.dart';
 
 part 'search_result_entity.freezed.dart';
 
@@ -7,7 +7,7 @@ part 'search_result_entity.freezed.dart';
 sealed class SearchResultEntity with _$SearchResultEntity {
   const factory SearchResultEntity({
     required int page,
-    required List<MovieEntity> results,
+    required List<MediaItem> results,
     required int totalPages,
   }) = _SearchResultEntity;
 }

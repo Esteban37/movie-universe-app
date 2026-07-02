@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/media/tmdb_image.dart';
-import '../../../../../shared/design_system/atoms/backdrop_image.dart';
+import '../../core/media/tmdb_image.dart';
+import '../design_system/atoms/backdrop_image.dart';
 
+/// Collapsing app bar overlay for immersive movie and TV detail screens.
 class FloatingDetailAppBar extends StatelessWidget {
   const FloatingDetailAppBar({
     super.key,

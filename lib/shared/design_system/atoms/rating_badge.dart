@@ -22,7 +22,7 @@ class RatingBadge extends StatelessWidget {
         SizedBox(width: iconSize / 4),
         Text(
           rating.toStringAsFixed(1),
-          style: textStyle ?? theme.textTheme.bodySmall,
+          style: textStyle ?? theme.textTheme.labelMedium,
         ),
       ],
     );

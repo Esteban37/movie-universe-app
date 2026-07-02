@@ -34,8 +34,9 @@ void main() {
     await tester.pumpWidget(const ProviderScope(child: MovieUniverseApp()));
     await tester.pumpAndSettle();
 
-    expect(find.text('Movies'), findsOneWidget);
+    expect(find.text('Movies'), findsAtLeastNWidgets(1));
     expect(find.text('Popular'), findsOneWidget);
     expect(find.text('Top Rated'), findsOneWidget);
+    expect(find.text('Series'), findsOneWidget);
   });
 }

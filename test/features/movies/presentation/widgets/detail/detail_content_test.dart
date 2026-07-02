@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movie_universe_app/core/media/tmdb_image.dart';
 import 'package:movie_universe_app/features/movies/domain/entities/movie_detail_entity.dart';
 import 'package:movie_universe_app/features/movies/presentation/widgets/detail/detail_content.dart';
-import 'package:movie_universe_app/features/movies/presentation/widgets/detail/immersive_detail_constants.dart';
+import 'package:movie_universe_app/shared/presentation/detail/immersive_detail_constants.dart';
 import 'package:movie_universe_app/shared/design_system/atoms/genre_chip.dart';
 
 void main() {

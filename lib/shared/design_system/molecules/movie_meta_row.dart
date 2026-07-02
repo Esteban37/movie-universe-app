@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../atoms/rating_badge.dart';
+import 'media_meta_row.dart';
 
+/// Backward-compatible movie-only meta row. Prefer [MediaMetaRow] for new code.
+@Deprecated('Use MediaMetaRow instead')
 class MovieMetaRow extends StatelessWidget {
   const MovieMetaRow({
     super.key,
@@ -24,26 +26,14 @@ class MovieMetaRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        RatingBadge(
-          rating: rating,
-          iconSize: ratingIconSize,
-          textStyle: ratingTextStyle ?? theme.textTheme.titleMedium,
-        ),
-        const SizedBox(height: 4),
-        Text(releaseDate, style: dateTextStyle ?? theme.textTheme.bodyMedium),
-        if (runtime != null && runtime! > 0) ...[
-          const SizedBox(height: 4),
-          Text(
-            '$runtime min',
-            style: runtimeTextStyle ?? theme.textTheme.bodyMedium,
-          ),
-        ],
-      ],
+    return MediaMetaRow(
+      rating: rating,
+      dateLabel: releaseDate,
+      runtimeMinutes: runtime,
+      ratingIconSize: ratingIconSize,
+      ratingTextStyle: ratingTextStyle,
+      dateTextStyle: dateTextStyle,
+      detailTextStyle: runtimeTextStyle,
     );
   }
 }
