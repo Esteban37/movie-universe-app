@@ -15,10 +15,6 @@ MediaDisplayModel toMediaDisplayModel(MediaItem item) {
   );
 }
 
-List<MediaDisplayModel> toMediaDisplayModels(List<MediaItem> items) {
-  return items.map(toMediaDisplayModel).toList();
-}
-
 MediaDisplayModel movieToMediaDisplayModel(MovieEntity entity) {
   return MediaDisplayModel(
     id: entity.id,

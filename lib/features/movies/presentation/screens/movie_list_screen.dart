@@ -5,7 +5,7 @@ import '../../../../core/media/tmdb_image_provider.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../shared/presentation/shell/primary_tab_app_bar.dart';
 import '../../domain/entities/movie_entity.dart';
-import '../../../../shared/mappers/movie_display_mapper.dart';
+import '../../../../shared/mappers/media_display_mapper.dart';
 import '../../../../shared/widgets/loading_view.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../../../../shared/widgets/empty_view.dart';
@@ -148,7 +148,7 @@ class _MovieTabState extends ConsumerState<_MovieTab> {
           itemBuilder: (context, index) {
             final movie = movies[index];
             return MovieCard(
-              media: movieEntityToMediaDisplayModel(movie),
+              media: movieToMediaDisplayModel(movie),
               imageUrls: imageUrls,
               onTap: () {
                 AppRouter.pushMovieDetail(context, '${movie.id}');
