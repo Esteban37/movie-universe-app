@@ -34,9 +34,11 @@ Develop a production-ready Flutter application that demonstrates:
 
 - 🎬 Popular Movies
 - ⭐ Top Rated Movies
-- 🔍 Search Movies by Name
-- 📄 Movie Details
-- ♾ Infinite Scroll Pagination
+- 📺 Popular & Top Rated TV Series
+- 🔍 Unified Search (Movies + Series) with filter chips
+- 📄 Movie & TV Show Details (immersive)
+- ♾ Infinite Scroll Pagination (lists + search)
+- 🧭 Bottom Navigation Shell (Movies · Series · Search)
 - ⚠ Error Handling
 - 🔄 Loading States
 - 📱 Responsive UI
@@ -53,7 +55,6 @@ Develop a production-ready Flutter application that demonstrates:
 - 📥 Offline Cache
 - 🎞 Similar Movies
 - 🎭 Cast Details
-- 📺 TV Shows
 - 🔔 Push Notifications
 - Integration Tests
 - Golden Tests

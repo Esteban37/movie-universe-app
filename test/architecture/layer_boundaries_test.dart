@@ -76,5 +76,59 @@ void main() {
 
       expect(violations, isEmpty, reason: violations.join('\n'));
     });
+
+    test('search domain does not import movies domain entities', () {
+      final violations = <String>[];
+
+      for (final entity in Directory('lib/features/search/domain')
+          .listSync(recursive: true)
+          .whereType<File>()
+          .where((file) => file.path.endsWith('.dart'))) {
+        final content = File(entity.path).readAsStringSync();
+        if (content.contains('features/movies/domain/entities/movie_entity')) {
+          violations.add(entity.path);
+        }
+      }
+
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('movies and tv_shows domain layers do not cross-import', () {
+      final violations = <String>[];
+
+      for (final feature in ['movies', 'tv_shows']) {
+        for (final entity in Directory('lib/features/$feature/domain')
+            .listSync(recursive: true)
+            .whereType<File>()
+            .where((file) => file.path.endsWith('.dart'))) {
+          final content = File(entity.path).readAsStringSync();
+          final other = feature == 'movies' ? 'tv_shows' : 'movies';
+          if (content.contains('features/$other/domain')) {
+            violations.add(entity.path);
+          }
+        }
+      }
+
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('movies and tv_shows presentation layers do not cross-import', () {
+      final violations = <String>[];
+
+      for (final feature in ['movies', 'tv_shows']) {
+        for (final entity in Directory('lib/features/$feature/presentation')
+            .listSync(recursive: true)
+            .whereType<File>()
+            .where((file) => file.path.endsWith('.dart'))) {
+          final content = File(entity.path).readAsStringSync();
+          final other = feature == 'movies' ? 'tv_shows' : 'movies';
+          if (content.contains('features/$other/presentation')) {
+            violations.add(entity.path);
+          }
+        }
+      }
+
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
   });
 }

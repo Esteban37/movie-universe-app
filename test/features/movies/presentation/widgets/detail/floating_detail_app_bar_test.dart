@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movie_universe_app/core/media/tmdb_image.dart';
-import 'package:movie_universe_app/features/movies/presentation/widgets/detail/floating_detail_app_bar.dart';
+import 'package:movie_universe_app/shared/widgets/floating_detail_app_bar.dart';
 
 void main() {
   testWidgets('FloatingDetailAppBar renders back button and title', (

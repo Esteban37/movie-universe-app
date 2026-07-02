@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluro/fluro.dart';
-
 import '../../../../core/errors/failures.dart';
 import '../../../../core/media/tmdb_image_provider.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../shared/presentation/shell/primary_tab_app_bar.dart';
 import '../../domain/entities/movie_entity.dart';
-import '../../../../shared/mappers/movie_display_mapper.dart';
+import '../../../../shared/mappers/media_display_mapper.dart';
 import '../../../../shared/widgets/loading_view.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../../../../shared/widgets/empty_view.dart';
@@ -46,21 +45,8 @@ class _MovieListScreenState extends ConsumerState<MovieListScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Movies'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            tooltip: 'Search movies',
-            onPressed: () {
-              FluroRouter.appRouter.navigateTo(
-                context,
-                '/search',
-                transition: TransitionType.fadeIn,
-              );
-            },
-          ),
-        ],
+      appBar: PrimaryTabAppBar.build(
+        title: 'Movies',
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
@@ -162,7 +148,7 @@ class _MovieTabState extends ConsumerState<_MovieTab> {
           itemBuilder: (context, index) {
             final movie = movies[index];
             return MovieCard(
-              movie: toMovieDisplayModel(movie),
+              media: movieToMediaDisplayModel(movie),
               imageUrls: imageUrls,
               onTap: () {
                 AppRouter.pushMovieDetail(context, '${movie.id}');

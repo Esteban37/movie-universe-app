@@ -32,5 +32,18 @@ void main() {
 
       expect(match, isNotNull);
     });
+
+    test('registers TV detail route', () {
+      final match = FluroRouter.appRouter.match('/tv/456');
+
+      expect(match, isNotNull);
+    });
+
+    test('extracts TV show ID from route parameters', () {
+      final match = FluroRouter.appRouter.match('/tv/456');
+
+      expect(match, isNotNull);
+      expect(match!.parameters['id'], ['456']);
+    });
   });
 }

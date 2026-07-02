@@ -4,7 +4,7 @@ import '../../../../../core/media/tmdb_image.dart';
 import '../../../../../shared/design_system/atoms/genre_chip.dart';
 import '../../../../../shared/design_system/atoms/poster_image.dart';
 import '../../../domain/entities/movie_detail_entity.dart';
-import 'immersive_detail_constants.dart';
+import '../../../../../shared/presentation/detail/immersive_detail_constants.dart';
 import 'immersive_movie_meta_row.dart';
 import 'staggered_reveal.dart';
 
@@ -34,9 +34,7 @@ class DetailContent extends StatelessWidget {
         ((collapseProgress - ImmersiveDetailConstants.contentPosterFadeStart) /
                 ImmersiveDetailConstants.contentPosterFadeSpan)
             .clamp(0.0, 1.0);
-    final overviewStyle =
-        (isTablet ? theme.textTheme.titleMedium : theme.textTheme.bodyLarge)
-            ?.copyWith(height: 1.6);
+    final overviewStyle = theme.textTheme.bodyLarge?.copyWith(height: 1.6);
 
     return ColoredBox(
       color: theme.scaffoldBackgroundColor,
@@ -55,7 +53,7 @@ class DetailContent extends StatelessWidget {
                 key: const ValueKey('detail-info-row'),
                 opacity: compactInfoOpacity,
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Semantics(
                       label: 'Poster for ${details.title}',
@@ -78,11 +76,9 @@ class DetailContent extends StatelessWidget {
                         children: [
                           Text(
                             details.title,
-                            style:
-                                (isTablet
-                                        ? theme.textTheme.headlineSmall
-                                        : theme.textTheme.titleLarge)
-                                    ?.copyWith(fontWeight: FontWeight.bold),
+                            style: isTablet
+                                ? theme.textTheme.headlineSmall
+                                : theme.textTheme.titleLarge,
                           ),
                           const SizedBox(height: 8),
                           ImmersiveMovieMetaRow(
