@@ -28,6 +28,14 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+          tooltip: 'Back',
+        ),
         title: TextField(
           controller: _searchController,
           autofocus: true,
