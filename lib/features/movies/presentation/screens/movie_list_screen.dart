@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluro/fluro.dart';
 
+import '../../../../core/router/app_router.dart';
 import '../../domain/entities/movie_entity.dart';
 import '../../../../shared/widgets/loading_view.dart';
 import '../../../../shared/widgets/error_view.dart';
@@ -157,11 +158,7 @@ class _MovieTabState extends ConsumerState<_MovieTab> {
             return MovieCard(
               movie: movie,
               onTap: () {
-                FluroRouter.appRouter.navigateTo(
-                  context,
-                  '/movie/${movie.id}',
-                  transition: TransitionType.fadeIn,
-                );
+                AppRouter.pushMovieDetail(context, '${movie.id}');
               },
             );
           },

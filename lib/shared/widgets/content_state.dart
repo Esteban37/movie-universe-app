@@ -14,6 +14,7 @@ class ContentState<T> extends StatelessWidget {
     this.onEmpty,
     this.emptyMessage,
     this.onRetry,
+    this.transitionDuration = const Duration(milliseconds: 300),
   });
 
   final AsyncValue<T> asyncValue;
@@ -22,30 +23,53 @@ class ContentState<T> extends StatelessWidget {
   final Widget Function()? onEmpty;
   final String? emptyMessage;
   final VoidCallback? onRetry;
+  final Duration transitionDuration;
 
   @override
   Widget build(BuildContext context) {
-    return asyncValue.when(
-      loading: () => onLoading?.call() ?? const Center(
-        child: SkeletonLoader(variant: SkeletonVariant.detail),
-      ),
-      error: (error, _) => ErrorView(
-        message: error.toString(),
-        onRetry: onRetry ?? () {},
-      ),
-      data: (data) {
-        if (data is List && data.isEmpty) {
-          return onEmpty?.call() ?? EmptyView(
-            message: emptyMessage ?? 'No content available.',
+    return AnimatedSwitcher(
+      duration: MediaQuery.of(context).disableAnimations
+          ? Duration.zero
+          : transitionDuration,
+      child: asyncValue.when(
+        loading: () => KeyedSubtree(
+          key: const ValueKey('content-state-loading'),
+          child:
+              onLoading?.call() ??
+              const Center(
+                child: SkeletonLoader(variant: SkeletonVariant.detail),
+              ),
+        ),
+        error: (error, _) => KeyedSubtree(
+          key: const ValueKey('content-state-error'),
+          child: ErrorView(
+            message: error.toString(),
+            onRetry: onRetry ?? () {},
+          ),
+        ),
+        data: (data) {
+          if (data is List && data.isEmpty) {
+            return KeyedSubtree(
+              key: const ValueKey('content-state-empty'),
+              child:
+                  onEmpty?.call() ??
+                  EmptyView(message: emptyMessage ?? 'No content available.'),
+            );
+          }
+          if (data == null) {
+            return KeyedSubtree(
+              key: const ValueKey('content-state-empty'),
+              child:
+                  onEmpty?.call() ??
+                  EmptyView(message: emptyMessage ?? 'No content available.'),
+            );
+          }
+          return KeyedSubtree(
+            key: const ValueKey('content-state-data'),
+            child: onData(data),
           );
-        }
-        if (data == null) {
-          return onEmpty?.call() ?? EmptyView(
-            message: emptyMessage ?? 'No content available.',
-          );
-        }
-        return onData(data);
-      },
+        },
+      ),
     );
   }
 }

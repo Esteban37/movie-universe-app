@@ -7,6 +7,7 @@ import 'package:movie_universe_app/features/movies/domain/repositories/movie_rep
 import 'package:movie_universe_app/features/movies/presentation/screens/movie_detail_screen.dart';
 import 'package:movie_universe_app/features/movies/presentation/providers/movie_details_provider.dart';
 import 'package:movie_universe_app/features/movies/presentation/providers/movie_repository_provider.dart';
+import 'package:movie_universe_app/shared/widgets/hero_backdrop.dart';
 import 'package:movie_universe_app/shared/widgets/skeleton_loader.dart';
 
 class MockMovieRepository extends Mock implements MovieRepository {}
@@ -20,7 +21,10 @@ const _testDetail = MovieDetailEntity(
   overview:
       'A thief who steals corporate secrets through dream-sharing technology is given the task of planting an idea into the mind of a C.E.O.',
   backdropPath: '/backdrop.jpg',
-  genres: [Genre(id: 28, name: 'Action'), Genre(id: 878, name: 'Sci-Fi')],
+  genres: [
+    Genre(id: 28, name: 'Action'),
+    Genre(id: 878, name: 'Sci-Fi'),
+  ],
   runtime: 148,
   tagline: 'Your mind is the scene of the crime.',
 );
@@ -30,12 +34,8 @@ Widget createTestApp({
   required String movieId,
 }) {
   return ProviderScope(
-    overrides: [
-      movieRepositoryProvider.overrideWith((ref) => repository),
-    ],
-    child: MaterialApp(
-      home: MovieDetailScreen(movieId: movieId),
-    ),
+    overrides: [movieRepositoryProvider.overrideWith((ref) => repository)],
+    child: MaterialApp(home: MovieDetailScreen(movieId: movieId)),
   );
 }
 
@@ -47,17 +47,14 @@ void main() {
   });
 
   testWidgets('5.1 Shows skeleton on loading', (tester) async {
-    when(
-      () => mockRepository.getMovieDetails(1),
-    ).thenAnswer((_) async {
+    when(() => mockRepository.getMovieDetails(1)).thenAnswer((_) async {
       await Future.delayed(const Duration(seconds: 1));
       return _testDetail;
     });
 
-    await tester.pumpWidget(createTestApp(
-      repository: mockRepository,
-      movieId: '1',
-    ));
+    await tester.pumpWidget(
+      createTestApp(repository: mockRepository, movieId: '1'),
+    );
 
     expect(find.byType(SkeletonLoader), findsOneWidget);
 
@@ -70,14 +67,13 @@ void main() {
       () => mockRepository.getMovieDetails(1),
     ).thenAnswer((_) async => _testDetail);
 
-    await tester.pumpWidget(createTestApp(
-      repository: mockRepository,
-      movieId: '1',
-    ));
+    await tester.pumpWidget(
+      createTestApp(repository: mockRepository, movieId: '1'),
+    );
     await tester.pump();
     await tester.pump();
 
-    expect(find.text('Inception'), findsOneWidget);
+    expect(find.text('Inception'), findsWidgets);
   });
 
   testWidgets('5.3 Shows error with retry button', (tester) async {
@@ -85,15 +81,10 @@ void main() {
       ProviderScope(
         overrides: [
           movieDetailsProvider(1).overrideWithValue(
-            AsyncValue.error(
-              Exception('Failed to load'),
-              StackTrace.current,
-            ),
+            AsyncValue.error(Exception('Failed to load'), StackTrace.current),
           ),
         ],
-        child: const MaterialApp(
-          home: MovieDetailScreen(movieId: '1'),
-        ),
+        child: const MaterialApp(home: MovieDetailScreen(movieId: '1')),
       ),
     );
     await tester.pump();
@@ -101,19 +92,34 @@ void main() {
     expect(find.text('Retry'), findsOneWidget);
   });
 
-  testWidgets('5.6 Responsive layout renders without error', (tester) async {
+  testWidgets('5.6 Responsive layout uses phone and tablet header heights', (
+    tester,
+  ) async {
     when(
       () => mockRepository.getMovieDetails(1),
     ).thenAnswer((_) async => _testDetail);
 
-    await tester.pumpWidget(createTestApp(
-      repository: mockRepository,
-      movieId: '1',
-    ));
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      createTestApp(repository: mockRepository, movieId: '1'),
+    );
     await tester.pump();
     await tester.pump();
 
-    expect(find.text('Inception'), findsOneWidget);
+    expect(tester.widget<HeroBackdrop>(find.byType(HeroBackdrop)).height, 300);
+
+    tester.view.physicalSize = const Size(700, 1024);
+    await tester.pumpWidget(
+      createTestApp(repository: mockRepository, movieId: '1'),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(tester.widget<HeroBackdrop>(find.byType(HeroBackdrop)).height, 420);
   });
 
   testWidgets('5.7 Renders content with reduced motion', (tester) async {
@@ -124,39 +130,63 @@ void main() {
     await tester.pumpWidget(
       MediaQuery(
         data: const MediaQueryData(disableAnimations: true),
-        child: createTestApp(
-          repository: mockRepository,
-          movieId: '1',
-        ),
+        child: createTestApp(repository: mockRepository, movieId: '1'),
       ),
     );
     await tester.pump();
     await tester.pump();
 
-    expect(find.text('Inception'), findsOneWidget);
+    final overviewReveal = find.descendant(
+      of: find.byKey(const ValueKey('detail-overview')),
+      matching: find.byType(Opacity),
+    );
+
+    expect(find.text('Inception'), findsWidgets);
+    expect(tester.widget<Opacity>(overviewReveal).opacity, 1);
   });
 
-  testWidgets('5.4 Header collapse shows content on scroll', (tester) async {
+  testWidgets('5.4 Header collapse reveals app bar and staged content', (
+    tester,
+  ) async {
     when(
       () => mockRepository.getMovieDetails(1),
     ).thenAnswer((_) async => _testDetail);
 
-    await tester.pumpWidget(createTestApp(
-      repository: mockRepository,
-      movieId: '1',
-    ));
+    await tester.pumpWidget(
+      createTestApp(repository: mockRepository, movieId: '1'),
+    );
     await tester.pump();
     await tester.pump();
 
+    final appBarTitle = tester.widget<Text>(
+      find.byKey(const ValueKey('collapsed-app-bar-title')),
+    );
+    expect(appBarTitle.style?.color?.a, 0);
+
+    // Content is visible from first paint (no scroll-tied hiding).
+    final overviewReveal = find
+        .descendant(
+          of: find.byKey(const ValueKey('detail-overview')),
+          matching: find.byType(Opacity),
+        )
+        .first;
+    expect(tester.widget<Opacity>(overviewReveal).opacity, greaterThan(0.9));
+
+    // Collapsing the header reveals the floating app bar title.
     final listView = find.byType(CustomScrollView);
-    await tester.drag(listView, const Offset(0, -200));
+    await tester.drag(listView, const Offset(0, -1000));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
 
-    expect(find.text('Inception'), findsWidgets);
+    final collapsedTitle = tester.widget<Text>(
+      find.byKey(const ValueKey('collapsed-app-bar-title')),
+    );
+    expect(collapsedTitle.style?.color?.a, greaterThan(0.9));
   });
 
-  testWidgets('5.5 Dismiss gesture springs back below threshold', (tester) async {
+  testWidgets('5.5 Dismiss gesture springs back below threshold', (
+    tester,
+  ) async {
     when(
       () => mockRepository.getMovieDetails(1),
     ).thenAnswer((_) async => _testDetail);
@@ -176,14 +206,51 @@ void main() {
     await tester.pump();
     await tester.pump();
 
-    await tester.flingFrom(
-      const Offset(200, 50),
-      const Offset(0, 80),
-      100,
-    );
+    await tester.flingFrom(const Offset(200, 50), const Offset(0, 80), 100);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.byType(MovieDetailScreen), findsOneWidget);
+  });
+
+  testWidgets('5.5 Dismiss gesture above threshold pops route', (tester) async {
+    when(
+      () => mockRepository.getMovieDetails(1),
+    ).thenAnswer((_) async => _testDetail);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          movieRepositoryProvider.overrideWith((ref) => mockRepository),
+        ],
+        child: MaterialApp(
+          home: Builder(
+            builder: (context) {
+              return TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => const MovieDetailScreen(movieId: '1'),
+                    ),
+                  );
+                },
+                child: const Text('Open detail'),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Open detail'));
+    await tester.pumpAndSettle();
+
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, 220));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 250));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MovieDetailScreen), findsNothing);
+    expect(find.text('Open detail'), findsOneWidget);
   });
 }

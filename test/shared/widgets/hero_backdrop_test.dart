@@ -51,7 +51,9 @@ void main() {
     expect(find.byType(HeroBackdrop), findsOneWidget);
   });
 
-  testWidgets('HeroBackdrop uses scaffold background color from theme', (tester) async {
+  testWidgets('HeroBackdrop uses scaffold background color from theme', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(scaffoldBackgroundColor: Colors.amber),

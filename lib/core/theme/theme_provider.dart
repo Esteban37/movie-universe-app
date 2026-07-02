@@ -1,14 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
-class ThemeModeNotifier extends Notifier<ThemeMode> {
-  @override
-  ThemeMode build() => ThemeMode.dark;
-
-  void setTheme(ThemeMode mode) => state = mode;
-  void toggle() =>
-      state = state == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
-}
-
-final themeModeProvider =
-    NotifierProvider<ThemeModeNotifier, ThemeMode>(ThemeModeNotifier.new);
+/// Current [ThemeMode] for the app. Defaults to dark per the premium redesign.
+final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.dark);

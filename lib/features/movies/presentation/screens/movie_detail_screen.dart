@@ -2,14 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/entities/movie_detail_entity.dart';
+import '../../../../shared/widgets/content_state.dart';
 import '../../../../shared/widgets/skeleton_loader.dart';
-import '../../../../shared/widgets/error_view.dart';
 import '../../../../shared/widgets/hero_backdrop.dart';
 import '../providers/movie_details_provider.dart';
 
 const _phoneHeaderHeight = 300.0;
 const _tabletHeaderHeight = 420.0;
 const _phoneBreakpoint = 600.0;
+const _expandedPosterWidth = 120.0;
+const _expandedPosterHeight = 180.0;
+const _contentPosterWidth = 80.0;
+const _contentPosterHeight = 120.0;
+
+// Poster cross-fade window (in header collapse progress). The header poster
+// shrinks to the content poster size by `_posterCrossoverStart`, then fades
+// out over `_posterCrossoverSpan` while the content poster fades in over an
+// overlapping window, producing a "same relative position" hand-off.
+const _posterCrossoverStart = 0.35;
+const _posterCrossoverSpan = 0.20;
+const _contentPosterFadeStart = 0.40;
+const _contentPosterFadeSpan = 0.22;
 
 class MovieDetailScreen extends ConsumerWidget {
   const MovieDetailScreen({super.key, required this.movieId});
@@ -22,13 +35,11 @@ class MovieDetailScreen extends ConsumerWidget {
     final detailsAsync = ref.watch(movieDetailsProvider(id));
 
     return Scaffold(
-      body: detailsAsync.when(
-        loading: () => const SkeletonLoader(variant: SkeletonVariant.detail),
-        error: (e, _) => ErrorView(
-          message: e.toString(),
-          onRetry: () => ref.invalidate(movieDetailsProvider(id)),
-        ),
-        data: (details) => _ImmersiveDetailView(details: details),
+      body: ContentState<MovieDetailEntity>(
+        asyncValue: detailsAsync,
+        onLoading: () => const SkeletonLoader(variant: SkeletonVariant.detail),
+        onRetry: () => ref.invalidate(movieDetailsProvider(id)),
+        onData: (details) => _ImmersiveDetailView(details: details),
       ),
     );
   }
@@ -58,9 +69,6 @@ class _ImmersiveDetailViewState extends State<_ImmersiveDetailView>
     return width < _phoneBreakpoint ? _phoneHeaderHeight : _tabletHeaderHeight;
   }
 
-  double get _collapsedHeaderHeight =>
-      MediaQuery.of(context).padding.top + kToolbarHeight;
-
   @override
   void initState() {
     super.initState();
@@ -88,7 +96,7 @@ class _ImmersiveDetailViewState extends State<_ImmersiveDetailView>
   }
 
   void _onScroll() {
-    final scrollRange = _headerHeight - _collapsedHeaderHeight;
+    final scrollRange = _headerHeight;
     if (scrollRange <= 0) return;
     final progress = (_scrollController.offset / scrollRange).clamp(0.0, 1.0);
     _collapseProgress.value = progress;
@@ -117,14 +125,29 @@ class _ImmersiveDetailViewState extends State<_ImmersiveDetailView>
     if (!_isDismissing) return;
 
     if (_dismissProgress >= 0.3) {
+      _isDismissing = false;
       _dismissController.value = _dismissProgress;
-      _dismissController.animateTo(1.0, curve: Curves.easeInCubic).then((_) {
-        if (mounted) Navigator.of(context).pop();
-      });
+      _dismissController
+          .animateTo(
+            1.0,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInCubic,
+          )
+          .then((_) {
+            if (mounted) Navigator.of(context).pop();
+          });
     } else {
+      _isDismissing = false;
       _dismissController.value = _dismissProgress;
-      _dismissController.animateTo(0.0, curve: Curves.easeOutCubic);
-      setState(() => _isDismissing = false);
+      _dismissController
+          .animateTo(
+            0.0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutCubic,
+          )
+          .then((_) {
+            if (mounted) setState(() {});
+          });
     }
   }
 
@@ -136,9 +159,11 @@ class _ImmersiveDetailViewState extends State<_ImmersiveDetailView>
         : null;
     final posterUrl = 'https://image.tmdb.org/t/p/w342${details.posterPath}';
     final theme = Theme.of(context);
+    final isTablet = MediaQuery.of(context).size.width >= _phoneBreakpoint;
 
     final dismissScale = 1.0 - (_dismissProgress * 0.08);
     final dismissTranslate = _dismissProgress * 200;
+    final dismissRadius = _dismissProgress * 20;
 
     return Semantics(
       explicitChildNodes: true,
@@ -147,8 +172,15 @@ class _ImmersiveDetailViewState extends State<_ImmersiveDetailView>
         builder: (context, collapseProgress, _) {
           return Stack(
             children: [
+              // Own background fades out during dismiss so the non-opaque
+              // route below (the movie list) shows through the gaps left by
+              // the shrinking card.
               Positioned.fill(
-                child: Container(color: theme.scaffoldBackgroundColor),
+                child: ColoredBox(
+                  color: theme.scaffoldBackgroundColor.withValues(
+                    alpha: 1 - _dismissProgress,
+                  ),
+                ),
               ),
               Transform(
                 alignment: Alignment.center,
@@ -157,84 +189,214 @@ class _ImmersiveDetailViewState extends State<_ImmersiveDetailView>
                   dismissScale,
                   1.0,
                 )..setTranslationRaw(0.0, dismissTranslate, 0.0),
-                child: Scaffold(
-                  backgroundColor: _dismissProgress > 0
-                      ? Colors.transparent
-                      : theme.scaffoldBackgroundColor,
-                  body: NotificationListener<ScrollNotification>(
-                    onNotification: (notification) {
-                      if (_dismissProgress > 0) return false;
-                      if (notification is OverscrollNotification &&
-                          notification.overscroll > 0 &&
-                          _scrollController.offset <= 0) {
-                        _onDismissDragUpdate(
-                          DragUpdateDetails(
-                            globalPosition: Offset.zero,
-                            delta: Offset(0, notification.overscroll),
-                          ),
-                        );
-                      }
-                      if (notification is ScrollEndNotification &&
-                          _isDismissing) {
-                        _onDismissDragEnd(DragEndDetails());
-                      }
-                      if (notification is ScrollEndNotification &&
-                          _isDismissing) {
-                        _onDismissDragEnd(DragEndDetails());
-                      }
-                      return false;
-                    },
-                    child: CustomScrollView(
-                      controller: _scrollController,
-                      physics: _dismissProgress > 0
-                          ? const NeverScrollableScrollPhysics()
-                          : const BouncingScrollPhysics(
-                              parent: AlwaysScrollableScrollPhysics(),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(dismissRadius),
+                    boxShadow: _dismissProgress > 0
+                        ? [
+                            BoxShadow(
+                              color: theme.colorScheme.shadow.withValues(
+                                alpha: 0.4 * _dismissProgress,
+                              ),
+                              blurRadius: 30,
+                              spreadRadius: 2,
                             ),
-                      slivers: [
-                        SliverPersistentHeader(
-                          pinned: true,
-                          delegate: _DetailHeaderDelegate(
+                          ]
+                        : null,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(dismissRadius),
+                    child: Scaffold(
+                      backgroundColor: theme.scaffoldBackgroundColor,
+                      body: Stack(
+                        children: [
+                          RepaintBoundary(
+                            child: Listener(
+                              onPointerMove: (event) {
+                                _onDismissDragUpdate(
+                                  DragUpdateDetails(
+                                    globalPosition: event.position,
+                                    delta: event.delta,
+                                  ),
+                                );
+                              },
+                              onPointerUp: (_) {
+                                if (_isDismissing) {
+                                  _onDismissDragEnd(DragEndDetails());
+                                }
+                              },
+                              onPointerCancel: (_) {
+                                if (_isDismissing) {
+                                  _onDismissDragEnd(DragEndDetails());
+                                }
+                              },
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onVerticalDragUpdate: _onDismissDragUpdate,
+                                onVerticalDragEnd: _onDismissDragEnd,
+                                child: CustomScrollView(
+                                  controller: _scrollController,
+                                  physics: _dismissProgress > 0
+                                      ? const NeverScrollableScrollPhysics()
+                                      : const BouncingScrollPhysics(
+                                          parent:
+                                              AlwaysScrollableScrollPhysics(),
+                                        ),
+                                  slivers: [
+                                    SliverPersistentHeader(
+                                      delegate: _DetailHeaderDelegate(
+                                        backdropUrl: backdropUrl,
+                                        posterUrl: posterUrl,
+                                        title: details.title,
+                                        voteAverage: details.voteAverage,
+                                        releaseDate: details.releaseDate,
+                                        runtime: details.runtime,
+                                        headerHeight: _headerHeight,
+                                        collapseProgress: collapseProgress,
+                                        reducedMotion: _reducedMotion,
+                                        isTablet: isTablet,
+                                      ),
+                                    ),
+                                    SliverToBoxAdapter(
+                                      child: _DetailContent(
+                                        details: details,
+                                        posterUrl: posterUrl,
+                                        collapseProgress: collapseProgress,
+                                        isTablet: isTablet,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          _FloatingDetailAppBar(
                             backdropUrl: backdropUrl,
-                            posterUrl: posterUrl,
                             title: details.title,
-                            voteAverage: details.voteAverage,
-                            releaseDate: details.releaseDate,
-                            runtime: details.runtime,
-                            headerHeight: _headerHeight,
-                            collapsedHeaderHeight: _collapsedHeaderHeight,
                             collapseProgress: collapseProgress,
-                            reducedMotion: _reducedMotion,
+                            onBack: () => Navigator.of(context).pop(),
                           ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _FloatingDetailAppBar extends StatelessWidget {
+  const _FloatingDetailAppBar({
+    required this.backdropUrl,
+    required this.title,
+    required this.collapseProgress,
+    required this.onBack,
+  });
+
+  final String? backdropUrl;
+  final String title;
+  final double collapseProgress;
+  final VoidCallback onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final topPadding = MediaQuery.of(context).padding.top;
+    final backgroundOpacity = collapseProgress.clamp(0.0, 1.0);
+    final titleOpacity = ((collapseProgress - 0.6) / 0.4).clamp(0.0, 1.0);
+    final backgroundImageOpacity = ((collapseProgress - 0.35) / 0.35).clamp(
+      0.0,
+      1.0,
+    );
+    final foregroundColor = Color.lerp(
+      colorScheme.onPrimary,
+      colorScheme.onSurface,
+      backgroundOpacity,
+    )!;
+
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      child: Semantics(
+        container: true,
+        child: ClipRect(
+          child: SizedBox(
+            height: topPadding + kToolbarHeight,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                if (backdropUrl != null)
+                  Opacity(
+                    opacity: backgroundImageOpacity,
+                    child: Image.network(
+                      backdropUrl!,
+                      fit: BoxFit.cover,
+                      alignment: Alignment.topCenter,
+                      errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                    ),
+                  ),
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: colorScheme.surface.withValues(
+                      alpha: backdropUrl == null
+                          ? backgroundOpacity
+                          : backgroundOpacity * 0.72,
+                    ),
+                  ),
+                ),
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        colorScheme.shadow.withValues(
+                          alpha: backgroundImageOpacity * 0.20,
                         ),
-                        SliverToBoxAdapter(
-                          child: _DetailContent(
-                            details: details,
-                            posterUrl: posterUrl,
-                            collapseProgress: collapseProgress,
-                          ),
+                        colorScheme.surface.withValues(
+                          alpha: backgroundOpacity * 0.30,
                         ),
                       ],
                     ),
                   ),
                 ),
-              ),
-              if (_dismissProgress > 0)
-                Positioned(
-                  top: MediaQuery.of(context).padding.top + 8,
-                  left: 16,
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: theme.colorScheme.onSurface,
+                Padding(
+                  padding: EdgeInsets.only(top: topPadding),
+                  child: NavigationToolbar(
+                    leading: IconButton(
+                      icon: Icon(Icons.arrow_back, color: foregroundColor),
+                      onPressed: onBack,
+                      tooltip: 'Back',
                     ),
-                    onPressed: () => Navigator.of(context).pop(),
-                    tooltip: 'Back',
+                    middle: Text(
+                      title,
+                      key: const ValueKey('collapsed-app-bar-title'),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: colorScheme.onSurface.withValues(
+                          alpha: titleOpacity,
+                        ),
+                      ),
+                    ),
+                    // Balances the leading back button so the title stays
+                    // visually centered. Favorite/menu actions were removed:
+                    // they are out of scope for the exercise and were non-functional.
+                    trailing: const SizedBox(width: 48),
+                    centerMiddle: true,
                   ),
                 ),
-            ],
-          );
-        },
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -249,9 +411,9 @@ class _DetailHeaderDelegate extends SliverPersistentHeaderDelegate {
     required this.releaseDate,
     required this.runtime,
     required this.headerHeight,
-    required this.collapsedHeaderHeight,
     required this.collapseProgress,
     required this.reducedMotion,
+    required this.isTablet,
   });
 
   final String? backdropUrl;
@@ -261,12 +423,12 @@ class _DetailHeaderDelegate extends SliverPersistentHeaderDelegate {
   final String releaseDate;
   final int runtime;
   final double headerHeight;
-  final double collapsedHeaderHeight;
   final double collapseProgress;
   final bool reducedMotion;
+  final bool isTablet;
 
   @override
-  double get minExtent => collapsedHeaderHeight;
+  double get minExtent => 0;
 
   @override
   double get maxExtent => headerHeight;
@@ -279,9 +441,29 @@ class _DetailHeaderDelegate extends SliverPersistentHeaderDelegate {
   ) {
     final theme = Theme.of(context);
     final progress = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
-    final heroOpacity = (1.0 - progress * 1.5).clamp(0.0, 1.0);
-    final posterWidth = 120.0 * (1.0 - progress);
-    final posterHeight = 180.0 * (1.0 - progress);
+    // The poster reaches the content poster's exact size/radius before the
+    // hand-off begins, so the two posters share identical dimensions during
+    // the cross-fade and read as a single element settling into place.
+    final sizeProgress = (progress / _posterCrossoverStart).clamp(0.0, 1.0);
+    final posterWidth =
+        _expandedPosterWidth +
+        ((_contentPosterWidth - _expandedPosterWidth) * sizeProgress);
+    final posterHeight =
+        _expandedPosterHeight +
+        ((_contentPosterHeight - _expandedPosterHeight) * sizeProgress);
+    final posterRadius = 8.0 - (4.0 * sizeProgress);
+    // Poster fades out over its cross-fade window; the content poster fades in
+    // over an overlapping window (see `_DetailContent`).
+    final posterOpacity =
+        (1.0 - (progress - _posterCrossoverStart) / _posterCrossoverSpan).clamp(
+          0.0,
+          1.0,
+        );
+    final heroTextOpacity = (1.0 - progress * 1.5).clamp(0.0, 1.0);
+    final horizontalPadding = isTablet ? 32.0 : 16.0;
+    final titleStyle = isTablet
+        ? theme.textTheme.headlineMedium
+        : theme.textTheme.headlineSmall;
 
     return Semantics(
       label: 'Movie backdrop for $title',
@@ -295,7 +477,8 @@ class _DetailHeaderDelegate extends SliverPersistentHeaderDelegate {
               HeroBackdrop(
                 imageUrl: backdropUrl!,
                 height: maxExtent,
-                collapseProgress: reducedMotion ? 1.0 : progress,
+                collapseProgress: progress,
+                enableParallax: !reducedMotion,
                 semanticLabel: 'Backdrop for $title',
               )
             else
@@ -331,122 +514,81 @@ class _DetailHeaderDelegate extends SliverPersistentHeaderDelegate {
                 ),
               ),
             ),
-            if (heroOpacity > 0)
+            if (posterOpacity > 0)
               Positioned(
                 bottom: 16,
-                left: 16,
-                right: 16,
+                left: horizontalPadding,
                 child: IgnorePointer(
-                  child: AnimatedOpacity(
-                    opacity: heroOpacity,
-                    duration: reducedMotion
-                        ? Duration.zero
-                        : const Duration(milliseconds: 100),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        if (posterWidth > 0)
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.network(
-                              posterUrl,
-                              width: posterWidth,
-                              height: posterHeight,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, _, _) => Container(
-                                width: posterWidth,
-                                height: posterHeight,
-                                color: Colors.grey.shade800,
-                                child: const Icon(Icons.movie, size: 48),
-                              ),
+                  child: Opacity(
+                    opacity: posterOpacity,
+                    child: Semantics(
+                      label: 'Poster for $title',
+                      image: true,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(posterRadius),
+                        child: Image.network(
+                          posterUrl,
+                          key: const ValueKey('header-poster'),
+                          width: posterWidth,
+                          height: posterHeight,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, _, _) => Container(
+                            width: posterWidth,
+                            height: posterHeight,
+                            color: theme.colorScheme.surfaceContainerHighest,
+                            child: Icon(
+                              Icons.movie,
+                              size: 48,
+                              color: theme.colorScheme.onSurfaceVariant,
                             ),
                           ),
-                        if (posterWidth > 0) const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                title,
-                                style: theme.textTheme.headlineSmall?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  shadows: const [
-                                    Shadow(
-                                      blurRadius: 8,
-                                      color: Colors.black54,
-                                    ),
-                                  ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            if (heroTextOpacity > 0)
+              Positioned(
+                bottom: 16,
+                left: horizontalPadding + posterWidth + 16,
+                right: horizontalPadding,
+                child: IgnorePointer(
+                  child: Opacity(
+                    opacity: heroTextOpacity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          title,
+                          style: titleStyle?.copyWith(
+                            color: theme.colorScheme.onPrimary,
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(
+                                blurRadius: 8,
+                                color: theme.colorScheme.shadow.withValues(
+                                  alpha: 0.54,
                                 ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 8),
-                              _MovieMetaRow(
-                                voteAverage: voteAverage,
-                                releaseDate: releaseDate,
-                                runtime: runtime,
-                                lightText: true,
                               ),
                             ],
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 8),
+                        _MovieMetaRow(
+                          voteAverage: voteAverage,
+                          releaseDate: releaseDate,
+                          runtime: runtime,
+                          lightText: true,
                         ),
                       ],
                     ),
                   ),
                 ),
               ),
-
-            Positioned(
-              top: MediaQuery.of(context).padding.top + 4,
-              left: 8,
-              child: IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: progress < 0.5
-                      ? Colors.white
-                      : theme.colorScheme.onSurface,
-                ),
-                onPressed: () => Navigator.of(context).pop(),
-                tooltip: 'Back',
-              ),
-            ),
-            Positioned(
-              top: MediaQuery.of(context).padding.top + 4,
-              right: 8,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Semantics(
-                    label: 'Add to favorites',
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.favorite_border,
-                        color: progress < 0.5
-                            ? Colors.white
-                            : theme.colorScheme.onSurface,
-                      ),
-                      onPressed: () {},
-                      tooltip: 'Add to favorites',
-                    ),
-                  ),
-                  Semantics(
-                    label: 'More options',
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.more_vert,
-                        color: progress < 0.5
-                            ? Colors.white
-                            : theme.colorScheme.onSurface,
-                      ),
-                      onPressed: () {},
-                      tooltip: 'More options',
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
@@ -457,7 +599,9 @@ class _DetailHeaderDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(_DetailHeaderDelegate oldDelegate) =>
       oldDelegate.collapseProgress != collapseProgress ||
       oldDelegate.backdropUrl != backdropUrl ||
-      oldDelegate.collapsedHeaderHeight != collapsedHeaderHeight;
+      oldDelegate.headerHeight != headerHeight ||
+      oldDelegate.reducedMotion != reducedMotion ||
+      oldDelegate.isTablet != isTablet;
 }
 
 class _MovieMetaRow extends StatelessWidget {
@@ -476,9 +620,10 @@ class _MovieMetaRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final mutedColor = lightText
-        ? Colors.white.withValues(alpha: 0.85)
-        : theme.colorScheme.onSurface.withValues(alpha: 0.7);
+        ? colorScheme.onPrimary.withValues(alpha: 0.85)
+        : colorScheme.onSurfaceVariant;
 
     return Row(
       children: [
@@ -486,12 +631,12 @@ class _MovieMetaRow extends StatelessWidget {
           label: 'Rating ${voteAverage.toStringAsFixed(1)} out of 10',
           child: Row(
             children: [
-              const Icon(Icons.star, size: 18, color: Color(0xFFFFD700)),
+              Icon(Icons.star, size: 18, color: colorScheme.tertiary),
               const SizedBox(width: 4),
               Text(
                 voteAverage.toStringAsFixed(1),
                 style: theme.textTheme.titleMedium?.copyWith(
-                  color: lightText ? Colors.white : null,
+                  color: lightText ? colorScheme.onPrimary : null,
                 ),
               ),
             ],
@@ -519,44 +664,67 @@ class _DetailContent extends StatelessWidget {
     required this.details,
     required this.posterUrl,
     required this.collapseProgress,
+    required this.isTablet,
   });
 
   final MovieDetailEntity details;
   final String posterUrl;
   final double collapseProgress;
+  final bool isTablet;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final showCompactHeader = collapseProgress > 0.5;
-    final compactOpacity = ((collapseProgress - 0.5) / 0.3).clamp(0.0, 1.0);
+    final colorScheme = theme.colorScheme;
+    final horizontalPadding = isTablet ? 32.0 : 16.0;
+    final topPadding = isTablet ? 24.0 : 16.0;
+    final compactInfoOpacity =
+        ((collapseProgress - _contentPosterFadeStart) / _contentPosterFadeSpan)
+            .clamp(0.0, 1.0);
+    final overviewStyle =
+        (isTablet ? theme.textTheme.titleMedium : theme.textTheme.bodyLarge)
+            ?.copyWith(height: 1.6);
 
     return ColoredBox(
       color: theme.scaffoldBackgroundColor,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+        padding: EdgeInsets.fromLTRB(
+          horizontalPadding,
+          topPadding,
+          horizontalPadding,
+          24,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (showCompactHeader)
-              AnimatedOpacity(
-                opacity: compactOpacity,
-                duration: const Duration(milliseconds: 150),
+            if (compactInfoOpacity > 0) ...[
+              Opacity(
+                key: const ValueKey('detail-info-row'),
+                opacity: compactInfoOpacity,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: Image.network(
-                        posterUrl,
-                        width: 56,
-                        height: 84,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, _, _) => Container(
-                          width: 56,
-                          height: 84,
-                          color: Colors.grey.shade800,
-                          child: const Icon(Icons.movie, size: 24),
+                    Semantics(
+                      label: 'Poster for ${details.title}',
+                      image: true,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: Image.network(
+                          posterUrl,
+                          key: const ValueKey('content-poster'),
+                          width: _contentPosterWidth,
+                          height: _contentPosterHeight,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, _, _) => Container(
+                            width: _contentPosterWidth,
+                            height: _contentPosterHeight,
+                            color: colorScheme.surfaceContainerHighest,
+                            child: Icon(
+                              Icons.movie,
+                              size: 24,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -567,9 +735,11 @@ class _DetailContent extends StatelessWidget {
                         children: [
                           Text(
                             details.title,
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style:
+                                (isTablet
+                                        ? theme.textTheme.headlineSmall
+                                        : theme.textTheme.titleLarge)
+                                    ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 8),
                           _MovieMetaRow(
@@ -583,43 +753,67 @@ class _DetailContent extends StatelessWidget {
                   ],
                 ),
               ),
-            if (showCompactHeader) const SizedBox(height: 16),
-            Wrap(
-              spacing: 8,
-              runSpacing: 4,
-              children: details.genres
-                  .map(
-                    (genre) => Chip(
-                      label: Text(
-                        genre.name,
-                        style: theme.textTheme.labelSmall,
-                      ),
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      visualDensity: VisualDensity.compact,
-                    ),
-                  )
-                  .toList(),
-            ),
-            if (details.tagline.isNotEmpty) ...[
               const SizedBox(height: 16),
-              Text(
-                details.tagline,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontStyle: FontStyle.italic,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                ),
-              ),
             ],
-            Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: Text(
-                details.overview,
-                style: theme.textTheme.bodyLarge?.copyWith(height: 1.6),
+            _StaggeredReveal(
+              key: const ValueKey('detail-genre-chips'),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                children: details.genres
+                    .map(
+                      (genre) => Chip(
+                        label: Text(
+                          genre.name,
+                          style: theme.textTheme.labelSmall,
+                        ),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
+            _StaggeredReveal(
+              key: const ValueKey('detail-overview'),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (details.tagline.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    Text(
+                      details.tagline,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontStyle: FontStyle.italic,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Text(details.overview, style: overviewStyle),
+                  ),
+                ],
               ),
             ),
           ],
         ),
       ),
     );
+  }
+}
+
+/// Keeps content fully visible from first paint. A scroll-tied staggered
+/// reveal was intentionally dropped: it hid below-the-fold content until the
+/// user scrolled, which conflicts with the explicit requirement that the
+/// movie information be visible immediately without scrolling.
+class _StaggeredReveal extends StatelessWidget {
+  const _StaggeredReveal({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(opacity: 1, child: child);
   }
 }

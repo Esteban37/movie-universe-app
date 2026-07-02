@@ -11,6 +11,7 @@ class AppTheme {
   static const _teal = Color(0xFF00BFA5);
   static const _warmWhite = Color(0xFFFAFAF8);
   static const _textPrimaryDark = Color(0xFFF0EFEC);
+  static const _textSecondaryDark = Color(0xFF9E9E9E);
 
   static const _darkColorScheme = ColorScheme(
     brightness: Brightness.dark,
@@ -24,6 +25,7 @@ class AppTheme {
     onError: Colors.white,
     surface: _surfaceDark,
     onSurface: _textPrimaryDark,
+    onSurfaceVariant: _textSecondaryDark,
     surfaceContainerHighest: _surfaceVariantDark,
     outline: Color(0xFF49454F),
   );
@@ -40,23 +42,81 @@ class AppTheme {
     onError: Colors.white,
     surface: Colors.white,
     onSurface: Color(0xFF1C1B1F),
+    onSurfaceVariant: Color(0xFF6E6E6E),
     surfaceContainerHighest: Color(0xFFF0EFEC),
     outline: Color(0xFF79747E),
   );
 
   static const _appTextTheme = TextTheme(
-    displayLarge: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, height: 1.22, letterSpacing: -0.25),
-    headlineLarge: TextStyle(fontSize: 28, fontWeight: FontWeight.w600, height: 1.29),
-    headlineMedium: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, height: 1.27),
-    headlineSmall: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, height: 1.33),
-    titleLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, height: 1.27, letterSpacing: 0.15),
-    titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, height: 1.5, letterSpacing: 0.15),
-    titleSmall: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, height: 1.43, letterSpacing: 0.1),
-    bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, height: 1.5, letterSpacing: 0.5),
-    bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1.43, letterSpacing: 0.25),
-    bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, height: 1.33, letterSpacing: 0.4),
-    labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, height: 1.43, letterSpacing: 0.1),
-    labelSmall: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, height: 1.45, letterSpacing: 0.5),
+    displayLarge: TextStyle(
+      fontSize: 36,
+      fontWeight: FontWeight.bold,
+      height: 1.22,
+      letterSpacing: -0.25,
+    ),
+    headlineLarge: TextStyle(
+      fontSize: 28,
+      fontWeight: FontWeight.w600,
+      height: 1.29,
+    ),
+    headlineMedium: TextStyle(
+      fontSize: 22,
+      fontWeight: FontWeight.w600,
+      height: 1.27,
+    ),
+    headlineSmall: TextStyle(
+      fontSize: 18,
+      fontWeight: FontWeight.w500,
+      height: 1.33,
+    ),
+    titleLarge: TextStyle(
+      fontSize: 22,
+      fontWeight: FontWeight.w500,
+      height: 1.27,
+      letterSpacing: 0.15,
+    ),
+    titleMedium: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+      height: 1.5,
+      letterSpacing: 0.15,
+    ),
+    titleSmall: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      height: 1.43,
+      letterSpacing: 0.1,
+    ),
+    bodyLarge: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      height: 1.5,
+      letterSpacing: 0.5,
+    ),
+    bodyMedium: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+      height: 1.43,
+      letterSpacing: 0.25,
+    ),
+    bodySmall: TextStyle(
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
+      height: 1.33,
+      letterSpacing: 0.4,
+    ),
+    labelLarge: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      height: 1.43,
+      letterSpacing: 0.1,
+    ),
+    labelSmall: TextStyle(
+      fontSize: 11,
+      fontWeight: FontWeight.w500,
+      height: 1.45,
+      letterSpacing: 0.5,
+    ),
   );
 
   static ThemeData dark() => _baseTheme(Brightness.dark, _darkColorScheme);
@@ -69,7 +129,9 @@ class AppTheme {
       brightness: brightness,
       colorScheme: colorScheme,
       textTheme: _appTextTheme,
-      scaffoldBackgroundColor: brightness == Brightness.dark ? _nearBlack : _warmWhite,
+      scaffoldBackgroundColor: brightness == Brightness.dark
+          ? _nearBlack
+          : _warmWhite,
       appBarTheme: AppBarTheme(
         centerTitle: true,
         elevation: 0,
