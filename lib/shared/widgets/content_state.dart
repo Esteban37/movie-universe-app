@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/errors/failures.dart';
 import 'skeleton_loader.dart';
 import 'error_view.dart';
 import 'empty_view.dart';
@@ -43,7 +44,9 @@ class ContentState<T> extends StatelessWidget {
         error: (error, _) => KeyedSubtree(
           key: const ValueKey('content-state-error'),
           child: ErrorView(
-            message: error.toString(),
+            failure: error is Failure
+                ? error
+                : UnexpectedFailure(details: error.toString()),
             onRetry: onRetry ?? () {},
           ),
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movie_universe_app/core/errors/failures.dart';
 import 'package:movie_universe_app/shared/widgets/content_state.dart';
 import 'package:movie_universe_app/shared/widgets/error_view.dart';
 import 'package:movie_universe_app/shared/widgets/empty_view.dart';
@@ -50,6 +51,31 @@ void main() {
 
     await tester.tap(find.text('Retry'));
     expect(retryCalled, isTrue);
+  });
+
+  testWidgets('ContentState shows friendly message for typed Failure', (
+    tester,
+  ) async {
+    final asyncValue = AsyncValue<List<String>>.error(
+      NetworkFailure(),
+      StackTrace.current,
+    );
+
+    await tester.pumpWidget(
+      wrapTest(
+        ContentState<List<String>>(
+          asyncValue: asyncValue,
+          onData: (data) => const Text('data'),
+          onRetry: () {},
+        ),
+      ),
+    );
+
+    expect(
+      find.text('No internet connection. Please check your network.'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Instance of'), findsNothing);
   });
 
   testWidgets('ContentState shows empty state for empty list', (tester) async {

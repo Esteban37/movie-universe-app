@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/entities/movie_detail_entity.dart';
+import '../../../../core/media/tmdb_image.dart';
 import '../../../../shared/widgets/content_state.dart';
 import '../../../../shared/widgets/skeleton_loader.dart';
 import '../../../../shared/widgets/hero_backdrop.dart';
@@ -154,10 +155,10 @@ class _ImmersiveDetailViewState extends State<_ImmersiveDetailView>
   @override
   Widget build(BuildContext context) {
     final details = widget.details;
-    final backdropUrl = details.backdropPath != null
-        ? 'https://image.tmdb.org/t/p/w780${details.backdropPath}'
-        : null;
-    final posterUrl = 'https://image.tmdb.org/t/p/w342${details.posterPath}';
+    final backdropUrl = TmdbImageUrl.backdrop(details.backdropPath);
+    final posterUrl =
+        TmdbImageUrl.poster(details.posterPath, size: TmdbPosterSize.large) ??
+        '';
     final theme = Theme.of(context);
     final isTablet = MediaQuery.of(context).size.width >= _phoneBreakpoint;
 
