@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/entities/movie_entity.dart';
-import 'movie_repository_provider.dart';
+import 'movie_usecase_providers.dart';
 
 class PopularMoviesNotifier extends AsyncNotifier<List<MovieEntity>> {
   int _currentPage = 0;
@@ -36,8 +36,8 @@ class PopularMoviesNotifier extends AsyncNotifier<List<MovieEntity>> {
   }
 
   Future<List<MovieEntity>> _fetchPage(int page) async {
-    final repository = ref.read(movieRepositoryProvider);
-    return repository.getPopular(page: page);
+    final getPopular = ref.read(getPopularMoviesProvider);
+    return getPopular(page: page);
   }
 }
 

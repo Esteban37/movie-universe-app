@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:movie_universe_app/core/errors/failures.dart';
 import 'package:movie_universe_app/features/search/presentation/providers/search_provider.dart';
 import 'package:movie_universe_app/features/search/presentation/widgets/search_result_card.dart';
 import 'package:movie_universe_app/shared/widgets/empty_view.dart';
@@ -28,14 +29,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-          tooltip: 'Back',
-        ),
         title: TextField(
           controller: _searchController,
           autofocus: true,
@@ -51,7 +44,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       body: moviesAsync.when(
         loading: () => const LoadingView(),
         error: (error, _) => ErrorView(
-          message: error.toString(),
+          failure: error is Failure
+              ? error
+              : UnexpectedFailure(details: error.toString()),
           onRetry: () => ref
               .read(searchProvider.notifier)
               .onQueryChanged(_searchController.text),

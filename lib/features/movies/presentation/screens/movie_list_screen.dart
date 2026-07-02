@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluro/fluro.dart';
 
+import '../../../../core/errors/failures.dart';
 import '../../../../core/router/app_router.dart';
 import '../../domain/entities/movie_entity.dart';
 import '../../../../shared/widgets/loading_view.dart';
@@ -135,7 +136,9 @@ class _MovieTabState extends ConsumerState<_MovieTab> {
     return moviesAsync.when(
       loading: () => const LoadingView(),
       error: (error, _) => ErrorView(
-        message: error.toString(),
+        failure: error is Failure
+            ? error
+            : UnexpectedFailure(details: error.toString()),
         onRetry: () => ref.invalidate(widget.provider),
       ),
       data: (movies) {

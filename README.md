@@ -41,6 +41,8 @@ Develop a production-ready Flutter application that demonstrates:
 - 🔄 Loading States
 - 📱 Responsive UI
 - 🧪 Unit Tests
+- 🧩 Widget Tests (design-system components, navigation flows)
+- 🏗 Design System (Atomic Design under `lib/shared/design_system/`)
 
 ---
 
@@ -54,8 +56,8 @@ Develop a production-ready Flutter application that demonstrates:
 - 🎭 Cast Details
 - 📺 TV Shows
 - 🔔 Push Notifications
-- Widget Tests
 - Integration Tests
+- Golden Tests
 
 ---
 
@@ -243,10 +245,11 @@ Current coverage includes:
 - Use Cases
 - Data Mapping
 - Search Logic
+- Design-system widget tests
+- List → detail navigation flow
 
 Future coverage:
 
-- Widget Tests
 - Integration Tests
 - Golden Tests
 
