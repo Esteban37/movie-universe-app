@@ -4,6 +4,7 @@ import 'package:movie_universe_app/core/media/tmdb_image_provider.dart';
 import 'package:movie_universe_app/core/errors/failures.dart';
 import 'package:movie_universe_app/features/search/presentation/providers/search_provider.dart';
 import 'package:movie_universe_app/features/search/presentation/widgets/search_result_card.dart';
+import 'package:movie_universe_app/shared/mappers/movie_display_mapper.dart';
 import 'package:movie_universe_app/shared/widgets/empty_view.dart';
 import 'package:movie_universe_app/shared/widgets/error_view.dart';
 import 'package:movie_universe_app/shared/widgets/loading_view.dart';
@@ -69,7 +70,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             child: ListView.builder(
               itemCount: movies.length,
               itemBuilder: (context, index) =>
-                  SearchResultCard(movie: movies[index], imageUrls: imageUrls),
+                  SearchResultCard(
+                    movie: toMovieDisplayModel(movies[index]),
+                    imageUrls: imageUrls,
+                  ),
             ),
           );
         },

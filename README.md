@@ -9,7 +9,7 @@ Movie Universe is a Flutter application developed as a technical assessment.
 
 The application allows users to browse, search and discover movies using **The Movie Database (TMDB)** API while demonstrating modern software engineering principles, scalable architecture and clean code practices.
 
-The project follows a **Spec-Driven Development** approach using **Openspec**, where architecture, decisions, requirements and implementation tasks are defined as living specifications throughout the development lifecycle.
+Architecture and engineering decisions are documented in **`AGENTS.md`** and this README. **OpenSpec** change specs live under `openspec/changes/` (see the OpenSpec section below).
 
 ---
 
@@ -49,7 +49,6 @@ Develop a production-ready Flutter application that demonstrates:
 ## Planned Improvements
 
 - ❤️ Favorites
-- 🌙 Dark Theme
 - 🌍 Localization
 - 📥 Offline Cache
 - 🎞 Similar Movies
@@ -60,6 +59,10 @@ Develop a production-ready Flutter application that demonstrates:
 - Golden Tests
 
 ---
+
+## Implemented Platform Features
+
+- 🌙 Dark / Light theme toggle via `themeModeProvider`
 
 # 🏗 Architecture
 
@@ -86,10 +89,14 @@ Data
 │
 Core
 │
+├── Config & Environment
+├── Data (shared DTOs & mappers)
+├── Media (TmdbImageUrl)
 ├── Networking
 ├── Routing
-├── Dependency Injection
-├── Shared Utilities
+├── Errors
+├── Theme
+└── Utilities
 ```
 
 This architecture promotes:
@@ -110,30 +117,71 @@ The planned directory structure follows Clean Architecture with a Feature First 
 lib/
 
 ├── core/
+│   ├── config/        # EnvironmentConfig, .env wiring
 │   ├── constants/
+│   ├── data/          # Shared DTOs & mappers (TmdbMovieDto)
+│   ├── errors/
+│   ├── media/         # TmdbImageUrl
 │   ├── network/
 │   ├── router/
-│   ├── errors/
 │   ├── theme/
-│   ├── extensions/
 │   └── utils/
 │
 ├── features/
-│
 │   ├── movies/
-│   │
-│   │── data/
-│   │── domain/
-│   │── presentation/
-│   │
-│   ├── search/
-│   │
-│   └── shared/
+│   │   ├── data/
+│   │   ├── domain/
+│   │   └── presentation/
+│   │       └── providers/
+│   │           ├── movie_repository_provider.dart
+│   │           ├── movie_usecase_providers.dart
+│   │           ├── paginated_movies_notifier.dart   # shared pagination base
+│   │           ├── popular_movies_provider.dart
+│   │           ├── top_rated_movies_provider.dart
+│   │           └── movie_details_provider.dart
+│   └── search/
+│       ├── data/
+│       ├── domain/
+│       └── presentation/
+│           └── providers/
+│               ├── search_repository_provider.dart
+│               ├── search_usecase_providers.dart
+│               └── search_provider.dart
 │
 ├── shared/
+│   ├── design_system/ # atoms, molecules, models, templates
+│   ├── mappers/       # Entity → display model mappers
+│   └── widgets/       # Premium shared widgets (barrel re-exports)
 │
 └── main.dart
 ```
+
+Provider wiring convention (both features):
+
+```text
+# Search
+search_repository_provider.dart  → SearchRepository (DI only)
+search_usecase_providers.dart    → searchMoviesProvider (SearchMovies use case)
+search_provider.dart             → UI notifier (calls use case)
+
+# Movies
+movie_repository_provider.dart   → MovieRepository (DI only)
+movie_usecase_providers.dart     → GetPopularMovies, GetTopRatedMovies, GetMovieDetails
+paginated_movies_notifier.dart   → shared infinite-scroll base for list tabs
+popular_movies_provider.dart     → Popular tab notifier (extends paginated base)
+top_rated_movies_provider.dart   → Top Rated tab notifier (extends paginated base)
+movie_details_provider.dart      → detail FutureProvider (calls use case)
+```
+
+---
+
+# 📋 OpenSpec
+
+OpenSpec change specs live under `openspec/changes/<change-name>/`. They track architecture decisions, requirements, and implementation tasks alongside the code.
+
+- Current change: **`architecture-hardening`** — Clean Architecture, design system, typed errors, and test coverage aligned with the codebase.
+- Run `openspec validate architecture-hardening --strict` before marking the change complete (when the OpenSpec CLI is available locally).
+- See `AGENTS.md` for the full workflow.
 
 ---
 
@@ -149,7 +197,7 @@ The project applies:
 - Immutable Models
 - Dependency Injection
 - Single Responsibility Principle
-- Spec-Driven Development (Openspec)
+- Spec-Driven Development (OpenSpec — see `openspec/changes/`)
 
 ---
 
@@ -159,12 +207,13 @@ The project applies:
 |------------|---------|
 | Flutter | Mobile Framework |
 | Dart | Programming Language |
-| Riverpod | State Management |
+| Riverpod | State Management (flutter_hooks not used) |
 | Dio | Networking |
 | Freezed | Immutable Models |
 | Fluro | Navigation |
 | Build Runner | Code Generation |
-| Mocktail / Mockito | Testing |
+| Mocktail | Testing mocks |
+| dependency_validator | Pubspec dependency hygiene |
 
 ---
 
@@ -246,12 +295,21 @@ Current coverage includes:
 - Data Mapping
 - Search Logic
 - Design-system widget tests
+- Immersive detail widget tests
+- Architecture layer boundary tests
 - List → detail navigation flow
 
 Future coverage:
 
 - Integration Tests
 - Golden Tests
+
+Architecture checks:
+
+```bash
+flutter test test/architecture/
+dart run dependency_validator
+```
 
 ---
 
@@ -270,8 +328,15 @@ Accessibility considerations include:
 
 ## Requirements
 
-- Flutter 3.35.7+
-- Dart 3.35.7+
+Minimum (per technical exercise):
+
+- Flutter **3.35.7+**
+- Dart **3.35.7+** (bundled with the Flutter SDK)
+
+This project targets:
+
+- **SDK constraint:** `^3.12.2` in `pubspec.yaml` (Dart shipped with current stable Flutter)
+- **Verified locally:** Flutter 3.44.3 · Dart 3.12.2
 
 ---
 

@@ -1,5 +1,5 @@
+import 'package:movie_universe_app/core/data/dtos/tmdb_movie_dto.dart';
 import 'package:movie_universe_app/features/movies/data/dtos/movie_detail_dto.dart';
-import 'package:movie_universe_app/features/movies/data/dtos/movie_dto.dart';
 import 'package:movie_universe_app/features/movies/data/dtos/movie_response_dto.dart';
 import 'package:movie_universe_app/features/movies/domain/entities/movie_detail_entity.dart';
 import 'package:movie_universe_app/features/movies/domain/entities/movie_entity.dart';
@@ -64,7 +64,7 @@ class TestFixtures {
     ],
   };
 
-  static MovieDTO createMovieDTO({
+  static TmdbMovieDto createTmdbMovieDto({
     int id = 1,
     String title = 'Test Movie',
     String? posterPath = '/poster.jpg',
@@ -72,7 +72,7 @@ class TestFixtures {
     String? releaseDate = '2024-01-01',
     String? overview = 'A test overview',
   }) {
-    return MovieDTO(
+    return TmdbMovieDto(
       id: id,
       title: title,
       posterPath: posterPath,
@@ -114,7 +114,7 @@ class TestFixtures {
   static MovieResponseDTO createMovieResponseDTO({
     int page = 1,
     int totalPages = 10,
-    List<MovieDTO> results = const [],
+    List<TmdbMovieDto> results = const [],
   }) {
     return MovieResponseDTO(
       page: page,
@@ -126,7 +126,7 @@ class TestFixtures {
   static SearchResultDTO createSearchResultDTO({
     int page = 1,
     int totalPages = 5,
-    List<MovieDTO> results = const [],
+    List<TmdbMovieDto> results = const [],
   }) {
     return SearchResultDTO(
       page: page,

@@ -125,8 +125,7 @@ class _ImmersiveDetailViewState extends State<ImmersiveDetailView>
     final details = widget.details;
     final imageUrls = widget.imageUrls;
     final backdropUrl = imageUrls.backdrop(details.backdropPath);
-    final posterUrl =
-        imageUrls.poster(details.posterPath, size: TmdbPosterSize.large) ?? '';
+    final posterPath = details.posterPath;
     final theme = Theme.of(context);
     final isTablet =
         MediaQuery.of(context).size.width >=
@@ -217,7 +216,8 @@ class _ImmersiveDetailViewState extends State<ImmersiveDetailView>
                                     SliverPersistentHeader(
                                       delegate: DetailHeaderDelegate(
                                         backdropUrl: backdropUrl,
-                                        posterUrl: posterUrl,
+                                        posterPath: posterPath,
+                                        imageUrls: imageUrls,
                                         title: details.title,
                                         voteAverage: details.voteAverage,
                                         releaseDate: details.releaseDate,
@@ -231,7 +231,8 @@ class _ImmersiveDetailViewState extends State<ImmersiveDetailView>
                                     SliverToBoxAdapter(
                                       child: DetailContent(
                                         details: details,
-                                        posterUrl: posterUrl,
+                                        posterPath: posterPath,
+                                        imageUrls: imageUrls,
                                         collapseProgress: collapseProgress,
                                         isTablet: isTablet,
                                       ),
@@ -242,7 +243,8 @@ class _ImmersiveDetailViewState extends State<ImmersiveDetailView>
                             ),
                           ),
                           FloatingDetailAppBar(
-                            backdropUrl: backdropUrl,
+                            backdropPath: details.backdropPath,
+                            imageUrls: imageUrls,
                             title: details.title,
                             collapseProgress: collapseProgress,
                             onBack: () => Navigator.of(context).pop(),

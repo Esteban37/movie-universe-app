@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../features/movies/domain/entities/movie_entity.dart';
 import '../../../core/media/tmdb_image.dart';
+import '../atoms/poster_image.dart';
 import '../atoms/rating_badge.dart';
+import '../models/movie_display_model.dart';
 
 class MovieCard extends StatelessWidget {
   const MovieCard({
@@ -12,17 +13,12 @@ class MovieCard extends StatelessWidget {
     TmdbImageUrl? imageUrls,
   }) : imageUrls = imageUrls ?? const TmdbImageUrl();
 
-  final MovieEntity movie;
+  final MovieDisplayModel movie;
   final VoidCallback onTap;
   final TmdbImageUrl imageUrls;
 
   @override
   Widget build(BuildContext context) {
-    final posterUrl = imageUrls.poster(
-      movie.posterPath,
-      size: TmdbPosterSize.medium,
-    );
-
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -31,14 +27,16 @@ class MovieCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              child: posterUrl == null
-                  ? const Center(child: Icon(Icons.movie, size: 48))
-                  : Image.network(
-                      posterUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) =>
-                          const Center(child: Icon(Icons.movie, size: 48)),
-                    ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return PosterImage(
+                    path: movie.posterPath,
+                    width: constraints.maxWidth,
+                    height: constraints.maxHeight,
+                    imageUrls: imageUrls,
+                  );
+                },
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(8),

@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../core/media/tmdb_image.dart';
+import '../../../../../shared/design_system/atoms/backdrop_image.dart';
+
 class FloatingDetailAppBar extends StatelessWidget {
   const FloatingDetailAppBar({
     super.key,
-    required this.backdropUrl,
+    required this.backdropPath,
+    required this.imageUrls,
     required this.title,
     required this.collapseProgress,
     required this.onBack,
   });
 
-  final String? backdropUrl;
+  final String? backdropPath;
+  final TmdbImageUrl imageUrls;
   final String title;
   final double collapseProgress;
   final VoidCallback onBack;
@@ -43,20 +48,20 @@ class FloatingDetailAppBar extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                if (backdropUrl != null)
+                if (backdropPath != null)
                   Opacity(
                     opacity: backgroundImageOpacity,
-                    child: Image.network(
-                      backdropUrl!,
+                    child: BackdropImage(
+                      path: backdropPath,
                       fit: BoxFit.cover,
                       alignment: Alignment.topCenter,
-                      errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                      imageUrls: imageUrls,
                     ),
                   ),
                 DecoratedBox(
                   decoration: BoxDecoration(
                     color: colorScheme.surface.withValues(
-                      alpha: backdropUrl == null
+                      alpha: backdropPath == null
                           ? backgroundOpacity
                           : backgroundOpacity * 0.72,
                     ),
@@ -97,9 +102,6 @@ class FloatingDetailAppBar extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // Balances the leading back button so the title stays
-                    // visually centered. Favorite/menu actions were removed:
-                    // they are out of scope for the exercise and were non-functional.
                     trailing: const SizedBox(width: 48),
                     centerMiddle: true,
                   ),

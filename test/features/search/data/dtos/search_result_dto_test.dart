@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:movie_universe_app/features/movies/data/dtos/movie_dto.dart';
+import 'package:movie_universe_app/core/data/dtos/tmdb_movie_dto.dart';
 import 'package:movie_universe_app/features/search/data/dtos/search_result_dto.dart';
 
 void main() {
@@ -24,7 +24,7 @@ void main() {
       expect(dto.page, 1);
       expect(dto.totalPages, 10);
       expect(dto.results.length, 1);
-      expect(dto.results.first, isA<MovieDTO>());
+      expect(dto.results.first, isA<TmdbMovieDto>());
       expect(dto.results.first.id, 1);
       expect(dto.results.first.title, 'Movie 1');
     });

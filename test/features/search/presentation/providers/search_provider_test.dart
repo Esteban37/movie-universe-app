@@ -5,7 +5,7 @@ import 'package:movie_universe_app/features/movies/domain/entities/movie_entity.
 import 'package:movie_universe_app/features/search/domain/entities/search_result_entity.dart';
 import 'package:movie_universe_app/features/search/domain/usecases/search_movies.dart';
 import 'package:movie_universe_app/features/search/presentation/providers/search_provider.dart';
-import 'package:movie_universe_app/features/search/presentation/providers/search_repository_provider.dart';
+import 'package:movie_universe_app/features/search/presentation/providers/search_usecase_providers.dart';
 
 class MockSearchMovies extends Mock implements SearchMovies {}
 
@@ -19,7 +19,7 @@ void main() {
   ProviderContainer createContainer() {
     return ProviderContainer(
       overrides: [
-        searchRepositoryProvider.overrideWith((ref) => mockSearchMovies),
+        searchMoviesProvider.overrideWith((ref) => mockSearchMovies),
       ],
     );
   }

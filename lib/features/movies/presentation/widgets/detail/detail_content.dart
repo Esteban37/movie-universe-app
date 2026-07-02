@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../core/media/tmdb_image.dart';
+import '../../../../../shared/design_system/atoms/genre_chip.dart';
+import '../../../../../shared/design_system/atoms/poster_image.dart';
 import '../../../domain/entities/movie_detail_entity.dart';
 import 'immersive_detail_constants.dart';
 import 'immersive_movie_meta_row.dart';
@@ -9,13 +12,15 @@ class DetailContent extends StatelessWidget {
   const DetailContent({
     super.key,
     required this.details,
-    required this.posterUrl,
+    required this.posterPath,
+    required this.imageUrls,
     required this.collapseProgress,
     required this.isTablet,
   });
 
   final MovieDetailEntity details;
-  final String posterUrl;
+  final String posterPath;
+  final TmdbImageUrl imageUrls;
   final double collapseProgress;
   final bool isTablet;
 
@@ -55,26 +60,15 @@ class DetailContent extends StatelessWidget {
                     Semantics(
                       label: 'Poster for ${details.title}',
                       image: true,
-                      child: ClipRRect(
+                      child: PosterImage(
+                        key: const ValueKey('content-poster'),
+                        path: posterPath,
+                        width: ImmersiveDetailConstants.contentPosterWidth,
+                        height: ImmersiveDetailConstants.contentPosterHeight,
+                        size: TmdbPosterSize.large,
                         borderRadius: BorderRadius.circular(4),
-                        child: Image.network(
-                          posterUrl,
-                          key: const ValueKey('content-poster'),
-                          width: ImmersiveDetailConstants.contentPosterWidth,
-                          height: ImmersiveDetailConstants.contentPosterHeight,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => Container(
-                            width: ImmersiveDetailConstants.contentPosterWidth,
-                            height:
-                                ImmersiveDetailConstants.contentPosterHeight,
-                            color: colorScheme.surfaceContainerHighest,
-                            child: Icon(
-                              Icons.movie,
-                              size: 24,
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ),
+                        placeholderIconSize: 24,
+                        imageUrls: imageUrls,
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -111,13 +105,9 @@ class DetailContent extends StatelessWidget {
                 runSpacing: 4,
                 children: details.genres
                     .map(
-                      (genre) => Chip(
-                        label: Text(
-                          genre.name,
-                          style: theme.textTheme.labelSmall,
-                        ),
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        visualDensity: VisualDensity.compact,
+                      (genre) => GenreChip(
+                        label: genre.name,
+                        labelStyle: theme.textTheme.labelSmall,
                       ),
                     )
                     .toList(),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../core/media/tmdb_image.dart';
+import '../../../../../shared/design_system/atoms/poster_image.dart';
 import '../../../../../shared/widgets/hero_backdrop.dart';
 import 'immersive_detail_constants.dart';
 import 'immersive_movie_meta_row.dart';
@@ -7,7 +9,8 @@ import 'immersive_movie_meta_row.dart';
 class DetailHeaderDelegate extends SliverPersistentHeaderDelegate {
   DetailHeaderDelegate({
     required this.backdropUrl,
-    required this.posterUrl,
+    required this.posterPath,
+    required this.imageUrls,
     required this.title,
     required this.voteAverage,
     required this.releaseDate,
@@ -19,7 +22,8 @@ class DetailHeaderDelegate extends SliverPersistentHeaderDelegate {
   });
 
   final String? backdropUrl;
-  final String posterUrl;
+  final String posterPath;
+  final TmdbImageUrl imageUrls;
   final String title;
   final double voteAverage;
   final String releaseDate;
@@ -43,9 +47,6 @@ class DetailHeaderDelegate extends SliverPersistentHeaderDelegate {
   ) {
     final theme = Theme.of(context);
     final progress = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
-    // The poster reaches the content poster's exact size/radius before the
-    // hand-off begins, so the two posters share identical dimensions during
-    // the cross-fade and read as a single element settling into place.
     final sizeProgress =
         (progress / ImmersiveDetailConstants.posterCrossoverStart).clamp(
           0.0,
@@ -62,8 +63,6 @@ class DetailHeaderDelegate extends SliverPersistentHeaderDelegate {
                 ImmersiveDetailConstants.expandedPosterHeight) *
             sizeProgress);
     final posterRadius = 8.0 - (4.0 * sizeProgress);
-    // Poster fades out over its cross-fade window; the content poster fades in
-    // over an overlapping window (see [DetailContent]).
     final posterOpacity =
         (1.0 -
                 (progress - ImmersiveDetailConstants.posterCrossoverStart) /
@@ -134,25 +133,14 @@ class DetailHeaderDelegate extends SliverPersistentHeaderDelegate {
                     child: Semantics(
                       label: 'Poster for $title',
                       image: true,
-                      child: ClipRRect(
+                      child: PosterImage(
+                        key: const ValueKey('header-poster'),
+                        path: posterPath,
+                        width: posterWidth,
+                        height: posterHeight,
+                        size: TmdbPosterSize.large,
                         borderRadius: BorderRadius.circular(posterRadius),
-                        child: Image.network(
-                          posterUrl,
-                          key: const ValueKey('header-poster'),
-                          width: posterWidth,
-                          height: posterHeight,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => Container(
-                            width: posterWidth,
-                            height: posterHeight,
-                            color: theme.colorScheme.surfaceContainerHighest,
-                            child: Icon(
-                              Icons.movie,
-                              size: 48,
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ),
+                        imageUrls: imageUrls,
                       ),
                     ),
                   ),
@@ -209,6 +197,7 @@ class DetailHeaderDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(DetailHeaderDelegate oldDelegate) =>
       oldDelegate.collapseProgress != collapseProgress ||
       oldDelegate.backdropUrl != backdropUrl ||
+      oldDelegate.posterPath != posterPath ||
       oldDelegate.headerHeight != headerHeight ||
       oldDelegate.reducedMotion != reducedMotion ||
       oldDelegate.isTablet != isTablet;

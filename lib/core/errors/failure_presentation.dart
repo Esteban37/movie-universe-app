@@ -15,5 +15,5 @@ String errorDisplayMessage(Object error) {
   if (error is Failure) {
     return failureUserMessage(error);
   }
-  return error.toString();
+  return UnexpectedFailure().message;
 }
