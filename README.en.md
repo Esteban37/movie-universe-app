@@ -4,9 +4,10 @@
 
 Flutter app to discover popular, top-rated, and searchable **movies and TV series** via [The Movie Database (TMDB)](https://developer.themoviedb.org/) — **immersive UI**, unified search, and a feature-first **Clean Architecture** foundation with **Riverpod**; **213 automated tests**.
 
+![CI](https://github.com/Esteban37/movie-universe-app/actions/workflows/ci.yml/badge.svg?branch=main)
 ![Flutter](https://img.shields.io/badge/Flutter-3.35.7+-02569B?logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-3.12+-0175C2?logo=dart&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-213-passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-213%20passing-brightgreen)
 ![Architecture](https://img.shields.io/badge/Clean_Architecture-feature--first-blue)
 ![Theme](https://img.shields.io/badge/theme-dark%20%26%20light-111111)
 
