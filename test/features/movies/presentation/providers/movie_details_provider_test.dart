@@ -1,10 +1,12 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_universe_app/features/movies/domain/entities/movie_detail_entity.dart';
 import 'package:movie_universe_app/features/movies/domain/repositories/movie_repository.dart';
 import 'package:movie_universe_app/features/movies/presentation/providers/movie_details_provider.dart';
 import 'package:movie_universe_app/features/movies/presentation/providers/movie_repository_provider.dart';
+
+import '../../../../helpers/provider_container.dart';
 
 class MockMovieRepository extends Mock implements MovieRepository {}
 
@@ -16,7 +18,7 @@ void main() {
   });
 
   ProviderContainer createContainer() {
-    return ProviderContainer(
+    return createTestContainer(
       overrides: [
         movieRepositoryProvider.overrideWith((ref) => mockRepository),
       ],

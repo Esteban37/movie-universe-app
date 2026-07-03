@@ -1,6 +1,6 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_universe_app/core/domain/entities/media_item.dart';
 import 'package:movie_universe_app/core/domain/entities/media_type.dart';
 import 'package:movie_universe_app/features/movies/domain/entities/movie_entity.dart';
@@ -9,6 +9,8 @@ import 'package:movie_universe_app/features/search/domain/usecases/search_media.
 import 'package:movie_universe_app/features/search/presentation/providers/search_provider.dart';
 import 'package:movie_universe_app/features/search/presentation/providers/search_usecase_providers.dart';
 import 'package:movie_universe_app/features/tv_shows/domain/entities/tv_show_entity.dart';
+
+import '../../../../helpers/provider_container.dart';
 
 class MockSearchMedia extends Mock implements SearchMedia {}
 
@@ -20,7 +22,7 @@ void main() {
   });
 
   ProviderContainer createContainer() {
-    return ProviderContainer(
+    return createTestContainer(
       overrides: [
         searchMediaProvider.overrideWith((ref) => mockSearchMedia),
       ],
@@ -141,6 +143,131 @@ void main() {
       final state = container.read(searchProvider);
       expect(state.error, isNotNull);
       expect(state.isLoading, isFalse);
+    });
+
+    test('loadNextPage appends results when more pages exist', () async {
+      when(() => mockSearchMedia.call('test', page: 1)).thenAnswer(
+        (_) async => SearchResultEntity(
+          page: 1,
+          totalPages: 2,
+          results: [
+            MediaItem.movie(
+              const MovieEntity(
+                id: 1,
+                title: 'Page 1 Movie',
+                posterPath: '/p1.jpg',
+                voteAverage: 7.0,
+                releaseDate: '2024-01-01',
+                overview: 'Page 1',
+              ),
+            ),
+          ],
+        ),
+      );
+      when(() => mockSearchMedia.call('test', page: 2)).thenAnswer(
+        (_) async => SearchResultEntity(
+          page: 2,
+          totalPages: 2,
+          results: [
+            MediaItem.movie(
+              const MovieEntity(
+                id: 2,
+                title: 'Page 2 Movie',
+                posterPath: '/p2.jpg',
+                voteAverage: 8.0,
+                releaseDate: '2024-02-01',
+                overview: 'Page 2',
+              ),
+            ),
+          ],
+        ),
+      );
+
+      final container = createContainer();
+      final notifier = container.read(searchProvider.notifier);
+
+      notifier.onQueryChanged('test');
+      await Future.delayed(const Duration(milliseconds: 600));
+
+      await notifier.loadNextPage();
+
+      final state = container.read(searchProvider);
+      expect(state.items.length, 2);
+      expect(state.currentPage, 2);
+      expect(state.items.last.title, 'Page 2 Movie');
+      verify(() => mockSearchMedia.call('test', page: 1)).called(1);
+      verify(() => mockSearchMedia.call('test', page: 2)).called(1);
+    });
+
+    test('loadNextPage does nothing when no more pages remain', () async {
+      when(() => mockSearchMedia.call('test', page: 1)).thenAnswer(
+        (_) async => SearchResultEntity(
+          page: 1,
+          totalPages: 1,
+          results: [
+            MediaItem.movie(
+              const MovieEntity(
+                id: 1,
+                title: 'Only Page',
+                posterPath: '/p1.jpg',
+                voteAverage: 7.0,
+                releaseDate: '2024-01-01',
+                overview: 'Only',
+              ),
+            ),
+          ],
+        ),
+      );
+
+      final container = createContainer();
+      final notifier = container.read(searchProvider.notifier);
+
+      notifier.onQueryChanged('test');
+      await Future.delayed(const Duration(milliseconds: 600));
+
+      await notifier.loadNextPage();
+
+      verify(() => mockSearchMedia.call('test', page: 1)).called(1);
+      verifyNever(() => mockSearchMedia.call('test', page: 2));
+    });
+
+    test('retry re-runs search after failure', () async {
+      when(
+        () => mockSearchMedia.call('retry', page: 1),
+      ).thenThrow(Exception('API error'));
+
+      final container = createContainer();
+      final notifier = container.read(searchProvider.notifier);
+
+      notifier.onQueryChanged('retry');
+      await Future.delayed(const Duration(milliseconds: 600));
+      expect(container.read(searchProvider).error, isNotNull);
+
+      when(() => mockSearchMedia.call('retry', page: 1)).thenAnswer(
+        (_) async => SearchResultEntity(
+          page: 1,
+          totalPages: 1,
+          results: [
+            MediaItem.movie(
+              const MovieEntity(
+                id: 1,
+                title: 'Recovered',
+                posterPath: '/p.jpg',
+                voteAverage: 7.0,
+                releaseDate: '2024-01-01',
+                overview: 'Recovered',
+              ),
+            ),
+          ],
+        ),
+      );
+
+      await notifier.retry();
+
+      final state = container.read(searchProvider);
+      expect(state.error, isNull);
+      expect(state.items.single.title, 'Recovered');
+      verify(() => mockSearchMedia.call('retry', page: 1)).called(2);
     });
   });
 }
