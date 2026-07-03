@@ -17,6 +17,9 @@ jobs:
           channel: stable
           cache: true
 
+      - name: Prepare environment file
+        run: cp .env.development.example .env
+
       - name: Install dependencies
         run: flutter pub get
 
