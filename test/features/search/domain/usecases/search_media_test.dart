@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:movie_universe_app/core/domain/entities/media_item.dart';
+import 'package:movie_universe_app/shared/domain/entities/media_item.dart';
 import 'package:movie_universe_app/features/movies/domain/entities/movie_entity.dart';
 import 'package:movie_universe_app/features/search/domain/entities/search_result_entity.dart';
 import 'package:movie_universe_app/features/search/domain/repositories/search_repository.dart';

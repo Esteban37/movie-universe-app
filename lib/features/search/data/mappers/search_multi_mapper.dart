@@ -1,4 +1,4 @@
-import 'package:movie_universe_app/core/domain/entities/media_item.dart';
+import 'package:movie_universe_app/shared/domain/entities/media_item.dart';
 import 'package:movie_universe_app/features/movies/domain/entities/movie_entity.dart';
 import 'package:movie_universe_app/features/search/data/dtos/search_multi_result_dto.dart';
 import 'package:movie_universe_app/features/tv_shows/domain/entities/tv_show_entity.dart';

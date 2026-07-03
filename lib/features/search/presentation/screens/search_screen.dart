@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:movie_universe_app/core/domain/entities/media_item.dart';
-import 'package:movie_universe_app/core/domain/entities/media_type.dart';
+import 'package:movie_universe_app/shared/domain/entities/media_item.dart';
+import 'package:movie_universe_app/shared/domain/entities/media_type.dart';
 import 'package:movie_universe_app/core/errors/failures.dart';
 import 'package:movie_universe_app/core/media/tmdb_image_provider.dart';
 import 'package:movie_universe_app/core/router/app_router.dart';

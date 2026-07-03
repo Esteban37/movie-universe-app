@@ -1,4 +1,4 @@
-import 'package:movie_universe_app/core/domain/entities/media_type.dart';
+import 'package:movie_universe_app/shared/domain/entities/media_type.dart';
 
 /// Feature-agnostic media card/list display data for the design system.
 class MediaDisplayModel {

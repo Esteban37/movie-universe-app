@@ -130,5 +130,24 @@ void main() {
 
       expect(violations, isEmpty, reason: violations.join('\n'));
     });
+
+    test('core domain layer does not import feature modules', () {
+      final domainDir = Directory('lib/core/domain');
+      if (!domainDir.existsSync()) return;
+
+      final violations = <String>[];
+
+      for (final entity in domainDir
+          .listSync(recursive: true)
+          .whereType<File>()
+          .where((file) => file.path.endsWith('.dart'))) {
+        final content = File(entity.path).readAsStringSync();
+        if (content.contains('features/')) {
+          violations.add(entity.path);
+        }
+      }
+
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
   });
 }

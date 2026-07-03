@@ -1,5 +1,5 @@
 name: movie_universe_app
-description: "A new Flutter project."
+description: "Discover popular and top-rated movies and TV series with unified search, powered by TMDB."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -31,9 +31,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
   flutter_riverpod: ^3.3.2
   dio: ^5.10.0
   freezed_annotation: ^3.1.0
@@ -42,6 +39,8 @@ dependencies:
   flutter_dotenv: ^6.0.1
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
 
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -54,6 +53,7 @@ dev_dependencies:
   freezed: ^3.2.5
   json_serializable: ^6.14.0
   mocktail: ^1.0.5
+  riverpod: ^3.3.2
   dependency_validator: ^5.0.3
   flutter_launcher_icons: ^0.14.4
 
