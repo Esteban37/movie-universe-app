@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:movie_universe_app/core/domain/entities/media_type.dart';
+import 'package:movie_universe_app/shared/domain/entities/media_type.dart';
 import 'package:movie_universe_app/shared/design_system/molecules/media_card.dart';
 import 'package:movie_universe_app/shared/design_system/molecules/media_card_layout.dart';
 import 'package:movie_universe_app/shared/design_system/molecules/media_meta_row.dart';

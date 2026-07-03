@@ -1,16 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../domain/entities/tv_show_entity.dart';
-
-abstract class PaginatedTvShowsNotifier extends AsyncNotifier<List<TvShowEntity>> {
+/// Shared infinite-scroll pagination logic for media list tabs.
+abstract class PaginatedMediaNotifier<T> extends AsyncNotifier<List<T>> {
   int _currentPage = 0;
   bool _isLoadingMore = false;
   bool _hasMorePages = true;
 
-  Future<List<TvShowEntity>> fetchPage(int page);
+  Future<List<T>> fetchPage(int page);
 
   @override
-  Future<List<TvShowEntity>> build() async {
+  Future<List<T>> build() async {
     _currentPage = 1;
     _isLoadingMore = false;
     _hasMorePages = true;
@@ -23,12 +22,12 @@ abstract class PaginatedTvShowsNotifier extends AsyncNotifier<List<TvShowEntity>
 
     try {
       _currentPage++;
-      final newShows = await fetchPage(_currentPage);
-      if (newShows.isEmpty) {
+      final newItems = await fetchPage(_currentPage);
+      if (newItems.isEmpty) {
         _hasMorePages = false;
         _currentPage--;
       } else {
-        state = AsyncData([...state.value ?? [], ...newShows]);
+        state = AsyncData([...state.value ?? [], ...newItems]);
       }
     } catch (e, st) {
       _currentPage--;

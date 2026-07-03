@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master, developer]
+  pull_request:
+    branches: [main, master, developer]
+
+jobs:
+  analyze-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Dart analyze
+        run: dart analyze --fatal-warnings
+
+      - name: Dependency validator
+        run: dart run dependency_validator
+
+      - name: Unit and widget tests
+        run: flutter test
+
+      - name: Integration tests
+        run: flutter test integration_test
+
+      - name: OpenSpec doctor (when CLI and specs are present)
+        run: |
+          if [ -d openspec/specs ] && command -v openspec >/dev/null 2>&1; then
+            openspec doctor || true
+          else
+            echo "Skipping OpenSpec (specs directory or CLI not available)."
+          fi

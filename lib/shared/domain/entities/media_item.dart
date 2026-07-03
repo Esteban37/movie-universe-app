@@ -1,7 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:movie_universe_app/core/domain/entities/media_type.dart';
 import 'package:movie_universe_app/features/movies/domain/entities/movie_entity.dart';
 import 'package:movie_universe_app/features/tv_shows/domain/entities/tv_show_entity.dart';
+import 'package:movie_universe_app/shared/domain/entities/media_reference.dart';
+import 'package:movie_universe_app/shared/domain/entities/media_type.dart';
 
 part 'media_item.freezed.dart';
 
@@ -46,4 +47,6 @@ extension MediaItemX on MediaItem {
     MovieMediaItem(:final movie) => movie.overview,
     TvShowMediaItem(:final tvShow) => tvShow.overview,
   };
+
+  MediaReference get reference => MediaReference(id: id, type: mediaType);
 }

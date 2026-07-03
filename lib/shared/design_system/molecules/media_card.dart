@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/domain/entities/media_type.dart';
+import '../../../shared/domain/entities/media_type.dart';
 import '../../../core/media/tmdb_image.dart';
 import '../atoms/poster_image.dart';
 import '../atoms/rating_badge.dart';

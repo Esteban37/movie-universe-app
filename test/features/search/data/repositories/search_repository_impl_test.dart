@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:movie_universe_app/core/domain/entities/media_item.dart';
+import 'package:movie_universe_app/shared/domain/entities/media_item.dart';
 import 'package:movie_universe_app/core/errors/failures.dart';
 import 'package:movie_universe_app/features/search/data/datasources/search_remote_datasource.dart';
 import 'package:movie_universe_app/features/search/data/dtos/search_multi_result_dto.dart';

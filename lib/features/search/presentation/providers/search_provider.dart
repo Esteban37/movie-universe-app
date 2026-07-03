@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:movie_universe_app/core/domain/entities/media_item.dart';
-import 'package:movie_universe_app/core/domain/entities/media_type.dart';
+import 'package:movie_universe_app/shared/domain/entities/media_item.dart';
+import 'package:movie_universe_app/shared/domain/entities/media_type.dart';
 import 'package:movie_universe_app/core/utils/debouncer.dart';
 import 'package:movie_universe_app/features/search/presentation/providers/search_usecase_providers.dart';
 

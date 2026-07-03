@@ -2,3 +2,7 @@
 exclude:
   - "**/*.g.dart"
   - "**/*.freezed.dart"
+
+# Used only in generated *.g.dart files (excluded from scan above).
+ignore:
+  - json_annotation
