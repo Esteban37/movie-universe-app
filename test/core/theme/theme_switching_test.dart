@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movie_universe_app/main.dart';
 
+import '../../helpers/offline_app_overrides.dart';
+
 void main() {
   setUp(() {
     dotenv.loadFromString(envString: 'TMDB_ACCESS_TOKEN=test-token');
@@ -13,17 +15,25 @@ void main() {
     dotenv.clean();
   });
 
-  testWidgets('App renders with dark theme by default', (tester) async {
-    await tester.pumpWidget(const ProviderScope(child: MovieUniverseApp()));
+  Future<void> pumpApp(WidgetTester tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: offlineRepositoryOverrides(),
+        child: const MovieUniverseApp(),
+      ),
+    );
     await tester.pumpAndSettle();
+  }
+
+  testWidgets('App renders with dark theme by default', (tester) async {
+    await pumpApp(tester);
 
     final materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
     expect(materialApp.themeMode, ThemeMode.dark);
   });
 
   testWidgets('Both themes are provided', (tester) async {
-    await tester.pumpWidget(const ProviderScope(child: MovieUniverseApp()));
-    await tester.pumpAndSettle();
+    await pumpApp(tester);
 
     final materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
     expect(materialApp.theme, isNotNull);
@@ -31,8 +41,7 @@ void main() {
   });
 
   testWidgets('App renders without error with both themes', (tester) async {
-    await tester.pumpWidget(const ProviderScope(child: MovieUniverseApp()));
-    await tester.pumpAndSettle();
+    await pumpApp(tester);
 
     expect(find.text('Movies'), findsAtLeastNWidgets(1));
     expect(find.text('Popular'), findsOneWidget);
