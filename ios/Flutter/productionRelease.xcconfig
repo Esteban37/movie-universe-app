@@ -1,0 +1,4 @@
+#include "Release.xcconfig"
+APP_DISPLAY_NAME=Movie Universe
+PRODUCT_BUNDLE_IDENTIFIER=com.estebandavidsc.movie_universe_app
+ASSETCATALOG_COMPILER_APPICON_NAME=AppIcon
