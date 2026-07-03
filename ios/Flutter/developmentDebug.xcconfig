@@ -1,0 +1,4 @@
+#include "Debug.xcconfig"
+APP_DISPLAY_NAME=Movie Universe Dev
+PRODUCT_BUNDLE_IDENTIFIER=com.estebandavidsc.movie_universe_app.dev
+ASSETCATALOG_COMPILER_APPICON_NAME=AppIcon-development
