@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:riverpod/misc.dart';
 import 'package:movie_universe_app/features/movies/domain/repositories/movie_repository.dart';

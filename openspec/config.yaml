@@ -1,0 +1,79 @@
+schema: spec-driven
+
+context: |
+  # Movie Universe - Flutter Mobile Application
+
+  ## Project Overview
+  A Flutter application for discovering popular, top-rated, and searchable movies and TV series powered by The Movie Database (TMDB). Developed as a technical assessment demonstrating modern software engineering principles, scalable architecture, and clean code practices.
+
+  ## Tech Stack
+  - Framework: Flutter (3.35.7+)
+  - Language: Dart (3.35.7+)
+  - State Management: Riverpod (flutter_hooks not used)
+  - Networking: Dio
+  - Immutable Models: Freezed
+  - Navigation: Fluro
+  - Code Generation: Build Runner
+  - Testing: Mocktail, integration_test
+  - Architecture: Clean Architecture (Feature First)
+
+  ## Architecture Layers
+  - Presentation: UI, Widgets, Riverpod Providers
+  - Domain: Entities, Use Cases, Repository Contracts
+  - Data: Remote Data Sources, DTOs, Repository Implementations
+  - Core: Networking, Routing, Config, Shared TMDB DTOs, Errors, Theme
+  - Shared: cross-feature domain (MediaItem), design system, presentation templates
+
+  ## Current Features (Implemented)
+  - Popular Movies, Top Rated Movies
+  - Popular TV Series, Top Rated TV Series
+  - Unified Search (movies + series) with filter chips
+  - Movie & TV Show Details (immersive)
+  - Infinite Scroll Pagination (shared PaginatedMediaNotifier)
+  - Dark / Light theme toggle
+  - Error Handling, Loading States, Responsive UI
+  - Design System (Atomic Design)
+  - Shared domain: MediaItem, MediaType, MediaReference
+  - ImmersiveDetailViewTemplate + ImmersiveDetailHeaderDelegate
+  - Unit Tests, Widget Tests, Architecture Boundary Tests
+  - Integration Tests (shell tab → detail flows)
+  - CI: dart analyze, dependency_validator, flutter test
+
+  ## Features Planned (Not Yet Implemented)
+  - Favorites (local persistence)
+  - Localization (i18n)
+  - Offline Cache
+  - Similar Movies / Cast Details
+  - Push Notifications
+  - Golden Tests
+
+  ## Principles
+  - SOLID Principles
+  - Clean Code
+  - Repository Pattern
+  - Feature First organization
+  - Immutable Models
+  - Dependency Injection
+  - Spec-Driven Development (OpenSpec)
+
+rules:
+  proposal:
+    - Include "Problem Statement" section describing what we're solving
+    - Include "Non-goals" section clarifying what is out of scope
+    - Reference README.md features list
+  design:
+    - Reference existing lib/ structure patterns if available
+    - Follow Clean Architecture layer separation
+    - Consider testability in all design decisions
+  tasks:
+    - Break tasks by architecture layer (data, domain, presentation, core)
+    - Include test tasks alongside implementation tasks
+    - Prefix Flutter-specific tasks with [Flutter]
+  implementation:
+    - Presentation providers MUST call use cases, not repositories directly
+    - Surface typed Failure messages to UI; never use error.toString() for Failure types
+    - Place reusable UI in lib/shared/design_system/ following atomic design layers
+    - No hardcoded colors in widgets; use ThemeData colorScheme/textTheme tokens
+    - No hardcoded TMDB image URLs; use core/media/tmdb_image.dart
+    - Add tests alongside every implementation task
+    - Preserve premium-ui-redesign visuals (theme, navigation, immersive detail animations); architecture refactors are structural only — never replace premium screens with simplified layouts

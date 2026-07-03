@@ -39,10 +39,14 @@ bin/
 .env.production
 .env.local
 
+# Local exercise brief — not part of the public repo
+docs/requeriments.md
+
 ### Flutter ###
 .dart_tool/
 .packages
 build/
+.flutter-plugins-dependencies
 *.iml
 *.ipr
 *.iws
@@ -50,9 +54,7 @@ build/
 ### IDE ###
 .idea/
 
-### IA ###
+### IA tooling (local only) ###
 .agents
 .opencode
-/openspec/
 skills-lock.json
-AGENTS.md

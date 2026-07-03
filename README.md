@@ -1,423 +1,175 @@
 # 🎬 Movie Universe
-A Flutter application for discovering popular, top-rated, and searchable movies powered by The Movie Database (TMDB).
+
+🇪🇸 Versión en español · **[English README](README.en.md)**
+
+App Flutter para descubrir **películas y series** populares, mejor valoradas y buscables con [The Movie Database (TMDB)](https://developer.themoviedb.org/) — **UI inmersiva**, búsqueda unificada y base **Clean Architecture** feature-first con **Riverpod**; **213 tests** automatizados.
+
+![Flutter](https://img.shields.io/badge/Flutter-3.35.7+-02569B?logo=flutter&logoColor=white)
+![Dart](https://img.shields.io/badge/Dart-3.12+-0175C2?logo=dart&logoColor=white)
+![Tests](https://img.shields.io/badge/tests-213-passing-brightgreen)
+![Architecture](https://img.shields.io/badge/Clean_Architecture-feature--first-blue)
+![Theme](https://img.shields.io/badge/theme-dark%20%26%20light-111111)
 
 ---
 
-# 📖 Overview
+## Vista previa
 
-Movie Universe is a Flutter application developed as a technical assessment.
+*Tema oscuro — UI cinematográfica en los flujos principales.*
 
-The application allows users to browse, search and discover movies using **The Movie Database (TMDB)** API while demonstrating modern software engineering principles, scalable architecture and clean code practices.
+| Películas | Detalle inmersivo | Búsqueda unificada | Series |
+|:---------:|:-----------------:|:------------------:|:------:|
+| ![Inicio Películas — Popular y Top Rated](docs/assets/screenshots/movies-home.png) | ![Detalle inmersivo — backdrop con parallax](docs/assets/screenshots/movie-detail.png) | ![Búsqueda unificada con filtros](docs/assets/screenshots/search-unified.png) | ![Inicio Series — Popular y Top Rated](docs/assets/screenshots/tv-home.png) |
+| Popular y Top Rated | Parallax · swipe-to-dismiss | Películas + Series · paginación | Misma UX de listado |
 
-Architecture and engineering decisions are documented in **`AGENTS.md`** and this README. **OpenSpec** change specs live under `openspec/changes/` (see the OpenSpec section below).
-
----
-
-# 🎯 Objective
-
-Develop a production-ready Flutter application that demonstrates:
-
-- Software Engineering principles
-- Clean Architecture
-- SOLID Principles
-- State Management
-- Testability
-- Scalability
-- Documentation
-- Code Quality
+Alternancia claro/oscuro en runtime con `themeModeProvider`.
 
 ---
 
-# ✨ Features
+## Destacados
 
-## Implemented
-
-- 🎬 Popular Movies
-- ⭐ Top Rated Movies
-- 📺 Popular & Top Rated TV Series
-- 🔍 Unified Search (Movies + Series) with filter chips
-- 📄 Movie & TV Show Details (immersive)
-- ♾ Infinite Scroll Pagination (lists + search)
-- 🧭 Bottom Navigation Shell (Movies · Series · Search)
-- ⚠ Error Handling
-- 🔄 Loading States
-- 📱 Responsive UI
-- 🧪 Unit Tests
-- 🧩 Widget Tests (design-system components, navigation flows)
-- 🏗 Design System (Atomic Design under `lib/shared/design_system/`)
+- **Shell de 3 tabs** — Películas · Series · Búsqueda con paginación infinita
+- **Detalle inmersivo** — header colapsable, parallax, plantilla premium compartida
+- **Búsqueda unificada** — resultados multi-media con filtros en memoria
+- **UI dark-first** — capturas en tema oscuro; modo claro disponible
+- **Ingeniería** — errores tipados, design system, tests de capas, CI en GitHub Actions
 
 ---
 
-## Planned Improvements
+## Funcionalidades
 
-- ❤️ Favorites
-- 🌍 Localization
-- 📥 Offline Cache
-- 🎞 Similar Movies
-- 🎭 Cast Details
-- 🔔 Push Notifications
-- Integration Tests
-- Golden Tests
+### Implementado
 
----
+| Funcionalidad | Estado |
+|---------------|--------|
+| Películas y series — Popular y Top Rated | ✅ |
+| Detalle de película y/o serie | ✅ Pantallas inmersivas |
+| Buscador por nombre (películas y series) | ✅ Búsqueda unificada + filtros |
+| Tests automatizados | ✅ Repos, use cases, DTOs, providers, widget e integration |
+| Ejemplo listado → detalle | ✅ Widget + integration tests |
+| Scroll en listados | ✅ Paginación infinita (películas, series, búsqueda) |
+| Scroll en detalles | ✅ Collapse de header, parallax, swipe-to-dismiss (widget tests) |
+| Escalable / buenas prácticas | ✅ Clean Architecture, CI |
 
-## Implemented Platform Features
+Además: tema claro/oscuro, manejo tipado de errores.
 
-- 🌙 Dark / Light theme toggle via `themeModeProvider`
+### Fase 2 — mejoras opcionales
 
-# 🏗 Architecture
+Funcionalidades planeadas para una **siguiente iteración** del producto; la arquitectura actual ya permite agregarlas sin rediseño.
 
-The application follows **Clean Architecture** using a **Feature First** organization.
+Favoritos, localización (UI multi-idioma), caché offline, títulos similares, reparto, push notifications, golden tests.
 
-```text
-Presentation
-│
-├── UI
-├── Widgets
-├── Riverpod Providers
-│
-Domain
-│
-├── Entities
-├── Use Cases
-├── Repository Contracts
-│
-Data
-│
-├── Remote Data Sources
-├── DTOs
-├── Repository Implementations
-│
-Core
-│
-├── Config & Environment
-├── Data (shared DTOs & mappers)
-├── Media (TmdbImageUrl)
-├── Networking
-├── Routing
-├── Errors
-├── Theme
-└── Utilities
-```
+**Enfoque resumido:**
 
-This architecture promotes:
+- **Favoritos** — feature `favorites/` con persistencia local; clave `MediaReference` + snapshot ligero; cuarto tab en el shell.
+- **Offline** — repositorios compuestos (remoto + caché local); priorizar detalle visto y páginas de listado ya cargadas.
+- **Localización** — textos de UI (tabs, errores, labels) con `flutter_localizations` + ARB; dominio sin cambios.
 
-- Separation of Concerns
-- Testability
-- Maintainability
-- Scalability
-- Reusability
+Detalle completo: [`docs/roadmap.md`](docs/roadmap.md).
 
 ---
 
-# 📂 Project Structure
+## Stack tecnológico
 
-The planned directory structure follows Clean Architecture with a Feature First organization:
+| Tecnología | Uso |
+|------------|-----|
+| **Flutter 3.35.7+** | SDK del proyecto (verificado: **3.44.3**) |
+| **Dart 3.12.2** | `sdk: ^3.12.2` en `pubspec.yaml` — Dart **embebido** en el Flutter SDK; no comparte numeración con Flutter (no existe “Dart 3.35.7”, suele confundirse con la versión de Flutter) |
+| **Riverpod** | State management (sin Hooks) |
+| **Freezed** | Modelos inmutables |
+| **Fluro** | Navegación |
+| Dio | API TMDB |
+| Mocktail | Mocks en tests |
 
-```text
-lib/
-
-├── core/
-│   ├── config/        # EnvironmentConfig, .env wiring
-│   ├── constants/
-│   ├── data/          # Shared DTOs & mappers (TmdbMovieDto)
-│   ├── errors/
-│   ├── media/         # TmdbImageUrl
-│   ├── network/
-│   ├── router/
-│   ├── theme/
-│   └── utils/
-│
-├── features/
-│   ├── movies/
-│   │   ├── data/
-│   │   ├── domain/
-│   │   └── presentation/
-│   │       └── providers/
-│   │           ├── movie_repository_provider.dart
-│   │           ├── movie_usecase_providers.dart
-│   │           ├── paginated_movies_notifier.dart   # shared pagination base
-│   │           ├── popular_movies_provider.dart
-│   │           ├── top_rated_movies_provider.dart
-│   │           └── movie_details_provider.dart
-│   └── search/
-│       ├── data/
-│       ├── domain/
-│       └── presentation/
-│           └── providers/
-│               ├── search_repository_provider.dart
-│               ├── search_usecase_providers.dart
-│               └── search_provider.dart
-│
-├── shared/
-│   ├── design_system/ # atoms, molecules, models, templates
-│   ├── mappers/       # Entity → display model mappers
-│   └── widgets/       # Premium shared widgets (barrel re-exports)
-│
-└── main.dart
-```
-
-Provider wiring convention (both features):
-
-```text
-# Search
-search_repository_provider.dart  → SearchRepository (DI only)
-search_usecase_providers.dart    → searchMoviesProvider (SearchMovies use case)
-search_provider.dart             → UI notifier (calls use case)
-
-# Movies
-movie_repository_provider.dart   → MovieRepository (DI only)
-movie_usecase_providers.dart     → GetPopularMovies, GetTopRatedMovies, GetMovieDetails
-paginated_movies_notifier.dart   → shared infinite-scroll base for list tabs
-popular_movies_provider.dart     → Popular tab notifier (extends paginated base)
-top_rated_movies_provider.dart   → Top Rated tab notifier (extends paginated base)
-movie_details_provider.dart      → detail FutureProvider (calls use case)
-```
+Detalle: [`docs/architecture.md`](docs/architecture.md) · [`docs/runtime-design.md`](docs/runtime-design.md).
 
 ---
 
-# 📋 OpenSpec
+## Cómo ejecutar
 
-OpenSpec change specs live under `openspec/changes/<change-name>/`. They track architecture decisions, requirements, and implementation tasks alongside the code.
-
-- Current change: **`architecture-hardening`** — Clean Architecture, design system, typed errors, and test coverage aligned with the codebase.
-- Run `openspec validate architecture-hardening --strict` before marking the change complete (when the OpenSpec CLI is available locally).
-- See `AGENTS.md` for the full workflow.
-
----
-
-# 🧠 Software Engineering Principles
-
-The project applies:
-
-- SOLID Principles
-- Clean Code
-- Clean Architecture
-- Repository Pattern
-- Feature First
-- Immutable Models
-- Dependency Injection
-- Single Responsibility Principle
-- Spec-Driven Development (OpenSpec — see `openspec/changes/`)
-
----
-
-# 📦 Tech Stack
-
-| Technology | Purpose |
-|------------|---------|
-| Flutter | Mobile Framework |
-| Dart | Programming Language |
-| Riverpod | State Management (flutter_hooks not used) |
-| Dio | Networking |
-| Freezed | Immutable Models |
-| Fluro | Navigation |
-| Build Runner | Code Generation |
-| Mocktail | Testing mocks |
-| dependency_validator | Pubspec dependency hygiene |
-
----
-
-# 🌐 API
-
-This application consumes data from:
-
-**The Movie Database (TMDB)**
-
-https://developer.themoviedb.org/
-
-Authentication is performed using a Bearer Token generated from TMDB.
-
----
-
-# 🔄 State Management
-
-Riverpod is used as the application's state management solution.
-
-Application flow:
-
-```text
-UI
-↓
-Provider / Notifier
-↓
-Use Case
-↓
-Repository
-↓
-Datasource
-↓
-TMDB API
-```
-
----
-
-# 🌍 Navigation
-
-Navigation is managed using **Fluro**, providing centralized route management and better scalability.
-
----
-
-# 🌐 Networking
-
-Networking is implemented using **Dio**.
-
-Features include:
-
-- Interceptors
-- Logging
-- Timeouts
-- Error Handling
-- Retry Strategy
-
----
-
-# ⚠ Error Handling
-
-The application gracefully handles:
-
-- No Internet Connection
-- API Errors
-- Timeout Exceptions
-- Empty Responses
-- Unexpected Exceptions
-
----
-
-# 🧪 Testing
-
-The testing strategy focuses on business logic.
-
-Current coverage includes:
-
-- Repository
-- Providers
-- Use Cases
-- Data Mapping
-- Search Logic
-- Design-system widget tests
-- Immersive detail widget tests
-- Architecture layer boundary tests
-- List → detail navigation flow
-
-Future coverage:
-
-- Integration Tests
-- Golden Tests
-
-Architecture checks:
-
-```bash
-flutter test test/architecture/
-dart run dependency_validator
-```
-
----
-
-# ♿ Accessibility
-
-Accessibility considerations include:
-
-- Semantic widgets
-- Dynamic text scaling
-- Responsive layouts
-- Screen reader compatibility
-
----
-
-# 🚀 Getting Started
-
-## Requirements
-
-Minimum (per technical exercise):
-
-- Flutter **3.35.7+**
-- Dart **3.35.7+** (bundled with the Flutter SDK)
-
-This project targets:
-
-- **SDK constraint:** `^3.12.2` in `pubspec.yaml` (Dart shipped with current stable Flutter)
-- **Verified locally:** Flutter 3.44.3 · Dart 3.12.2
-
----
-
-## Installation
-
-Clone the repository
+**Requisitos:** Flutter **3.35.7+** (verificado: 3.44.3) · Dart **`^3.12.2`** (verificado: 3.12.2) — ver [Stack tecnológico](#stack-tecnológico) para el detalle de Dart.
 
 ```bash
 git clone https://github.com/Esteban37/movie-universe-app.git
-```
-
-Navigate to the project
-
-```bash
 cd movie-universe-app
-```
-
-Install dependencies
-
-```bash
 flutter pub get
-```
-
-Generate code
-
-```bash
 dart run build_runner build --delete-conflicting-outputs
-```
 
-Run the application
-
-```bash
-flutter run
-```
-
----
-
-# 🔐 Environment Configuration
-
-Environment-specific source files live outside the bundle (gitignored):
-
-- `.env.development` — local development (default)
-- `.env.production` — release builds
-
-Only **one** file is bundled in the app: `.env`. Copy the target environment before running or building:
-
-```bash
-# Development
 cp .env.development.example .env.development
 cp .env.development .env
-flutter run
+# Edita .env.development: TMDB_ACCESS_TOKEN con tu token (ver .env.example)
 
-# Production (CI or local release)
-cp .env.production .env
-flutter build apk --release
+flutter run
 ```
 
-See `.env.example` for all supported variables (`APP_ENV`, `TMDB_BASE_URL`, etc.).
+```bash
+flutter test
+flutter test integration_test
+```
 
-> Secrets are excluded from the repository. CI should generate `.env` from pipeline secrets before `flutter build`.
-
----
-
-# 📝 Assumptions
-
-- Internet connection is required.
-- A valid TMDB API token is required.
-- API rate limits are managed by TMDB.
-- The project prioritizes scalability over rapid implementation.
+> **`build_runner` es obligatorio en un clone limpio** — los `*.freezed.dart` generados están en `.gitignore`.
 
 ---
 
-# 👨‍💻 Author
+## Documentación
 
-**Esteban Serrano**
+El README es **bilingüe**; todo lo que está en `docs/` está en **inglés** (detalle técnico, OpenSpec, convenciones de ingeniería). Los mismos archivos se enlazan desde ambos README.
 
-Senior Mobile Software Engineer
+| Documento | Contenido |
+|-----------|-----------|
+| [`docs/architecture.md`](docs/architecture.md) | Capas, estructura, providers |
+| [`docs/runtime-design.md`](docs/runtime-design.md) | API, red, estado, errores |
+| [`docs/testing-strategy.md`](docs/testing-strategy.md) | Tests y CI |
+| [`docs/ai-usage.md`](docs/ai-usage.md) | SDD, OpenSpec, Git, verificación |
+| [`docs/roadmap.md`](docs/roadmap.md) | Funcionalidades planeadas |
+| [`docs/openspec.md`](docs/openspec.md) | Workflow OpenSpec |
+| [`AGENTS.md`](AGENTS.md) | Convenciones y guardrails de ingeniería |
+
+Índice completo: [`docs/README.md`](docs/README.md).
 
 ---
 
-> **"Software is not only about making things work, but about making them easy to evolve."**
+## Uso de IA
+
+> **Enfoque:** Desarrollo **spec-driven** con **OpenSpec** y **SDD**: definí la arquitectura (Clean Architecture feature-first, design system, tests de capas), alcance por change y criterios de aceptación en specs y `tasks.md`. La IA **aceleró** implementación, tests y borradores de documentación **a partir de ese contrato** — OpenCode y Cursor, distintos modelos, misma barra de calidad. Cada entrega la revisé antes de integrar: diff alineado a tareas, `dart analyze --fatal-warnings`, suite automatizada y revisión manual de UX.
+
+### ¿Por qué SDD + OpenSpec?
+
+**SDD (Spec-Driven Development)** acota el trabajo de la IA: implementa contra **indicaciones y specs que yo fijé**, no contra prompts abiertos. En la fase OpenCode usé **Context7 MCP** y **skills oficiales de Flutter/Dart** para anclar el modelo a documentación actual. **OpenSpec** materializa el flujo (proponer → aplicar → archivar) y permitió **evaluar modelos distintos** con **las mismas specs y el mismo checklist** antes de cada merge.
+
+### ¿Qué decisiones de arquitectura tomé?
+
+Definí y fui refinando, con criterio propio y referencias actuales del ecosistema Flutter:
+
+- **Arquitectura:** Clean Architecture, capas, feature-first, `shared/domain`, contratos de repositorio y use cases
+- **Patrones:** Repository, DI con Riverpod, paginación compartida, templates inmersivos, design system (Atomic Design)
+- **Escalabilidad:** desacoplamiento cross-feature, specs OpenSpec por incremento, ramas `feat/*` + PR
+- **Buenas prácticas:** errores tipados, tests de capas, CI, `dependency_validator`, preservación de UI premium
+
+La IA **propuso implementaciones y borradores** dentro de ese marco; **ajusté, rechacé o reescribí** cuando no cumplía el diseño acordado.
+
+### ¿Quién decide qué?
+
+| Responsabilidad | Autor (criterio humano) | IA (asistente) |
+|-----------------|-------------------------|----------------|
+| Arquitectura, patrones, escalabilidad y buenas prácticas | ✅ Definición y refinamiento | Sugerencias / implementación acotada |
+| Alcance, UX y prioridades | ✅ | — |
+| Aprobación de merge a `main` | ✅ | — |
+| Rechazar o corregir output incorrecto | ✅ | — |
+| Propuesta de código/tests/docs desde specs | — | ✅ |
+| Ejecutar tareas de `tasks.md` | — | ✅ |
+
+### ¿Qué valido antes de cada merge?
+
+Antes de integrar: diff alineado a `tasks.md` · `dart analyze --fatal-warnings` · `flutter test` · `flutter test test/architecture/` · `dart run dependency_validator` · revisión manual · **decisión explícita de merge**. La IA propone; **el merge es el visto bueno humano**.
+
+### ¿Cómo se traza en Git?
+
+Un OpenSpec change ≈ una rama `feat/*` ≈ un PR → `main`. El historial refleja **entregas incrementales revisadas**, no un volcado único generado por IA.
+
+**Detalle** (specs, ramas, PRs, modelos, Context7/skills, checklist): **[`docs/ai-usage.md`](docs/ai-usage.md)**
 
 ---
+
+## Autor
+
+**Esteban Serrano** — Senior Mobile Software Engineer
