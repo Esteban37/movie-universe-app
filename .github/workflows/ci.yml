@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main, master, developer]
+    branches: [main, master]
   pull_request:
-    branches: [main, master, developer]
+    branches: [main, master]
 
 jobs:
   analyze-and-test:
@@ -19,6 +19,9 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Generate code (Freezed / json_serializable)
+        run: dart run build_runner build --delete-conflicting-outputs
 
       - name: Dart analyze
         run: dart analyze --fatal-warnings
